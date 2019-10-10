@@ -10,39 +10,65 @@ const db = new sqlite3.Database('./sqlite.db', error => {
 
 /**
  * Fetch the entire table;
- * 
- * @param {String} location the location of the database;
- * @param {Function} callback the function;
+ * @param {String} selects 
+ * @param {String} table 
+ * @param {Function} callback 
+ * @param {String | Optional} where 
  */
-const fetchTable = (location = 'ARTISTS', callback) => {
-    db.all(`SELECT * FROM ${location}`, (error, rows) => {
-        if (!error) {
-            callback(rows);
-        }
+const fetchTable = (selects, table, callback, where = null) => {
+    const query = where
+        ? `SELECT ${selects} FROM ${table} WHERE ${where}`
+        : `SELECT ${selects} FROM ${table}`;
+    
+    db.serialize(() => {
+        db.all(query, (error, rows) => {
+            if (!error) {
+                callback(rows);
+            } else {
+                callback(null);
+            }
+        });
     });
 };
 
 /**
- * Create the table with the integrity types
+ * Create the table with the integrity types;
+ * @param {String} table 
+ * @param {String} info 
  */
-const createTable = (name, info) => {
-    db.run(`CREATE TABLE ${name} (${info})`);
+const createTable = (table, info) => {
+    db.serialize(() => {
+        db.run(`CREATE TABLE ${table} (${info})`);
+    });
+    
 };
 
 /**
- * Insert a row in the table
+ * Insert a row in the table;
+ * @param {String} table 
+ * @param {String} prep 
+ * @param {String} data 
  */
-const insertData = (name, prep, data) => {
-    db.run(
-        `INSERT INTO ${name} 
-            (${prep}) 
-        VALUES 
-            (${data})`
-    );
+const insertData = (table, prep, data) => {
+    db.serialize(() => {
+        db.run(
+            `INSERT INTO ${table} 
+                (${prep}) 
+            VALUES 
+                (${data})`
+        );
+    });
+    
 };
 
-const dropTable = name => {
-    db.run(`DROP TABLE ${name}`);
+/**
+ * Delete table if present
+ * @param {String} table 
+ */
+const dropTable = table => {
+    db.serialize(() => {
+        db.run(`DROP TABLE IF EXISTS ${table}`);
+    });
 };
 
 module.exports = {
