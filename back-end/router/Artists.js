@@ -1,20 +1,41 @@
 const json = require('../assets/music.json');
 const Database = require('../Database');
+const Utilities = require('../Utilities');
+const TABLE = 'ARTISTS';
 
+/**
+ * This function queries the artists table
+ * @param {Array} req 
+ * @param {Array} res 
+ */
 const getArtists = (req, res) => {
-    Database.fetchTable('*', 'ARTISTS', response => {
-        res.send(response);
+    let where = '';
+    const { contentType } = req.query;
+    
+    // parse possible query parameters for filtering 
+    Object.keys(req.query).forEach((key, i) => {
+        if (i > 0) where += " AND ";
+        where += `${key.toUpperCase()} = "${req.query[key]}"`;
     });
+    
+    Database.fetchTable('*', TABLE, response => {
+        res.status(200).send((contentType && contentType === 'csv')
+            ? Utilities.toCSV(response)
+            : response
+        );
+    }, where === '' ? null : where);
 };
 
+/**
+ * This function initialises the ARTISTS table and
+ * populates it with the initial given values
+ */
 const initArtists = () => {
-    const TABLE = 'ARTISTS';
-    
     Database.dropTable(TABLE);
 
     Database.createTable(
         TABLE,
-        'ID CHAR PRIMARY KEY, FAMILIARITY FLOAT, HOTTNESS FLOAT, LATITUDE FLOAT, LOCATION INT, LONGTITUDE FLOAT, NAME TEXT, SIMILAR FLOAT, TERMS TEXT, FREQ FLOAT'
+        'ID CHAR PRIMARY KEY, FAMILIARITY FLOAT, HOTTTNESSS FLOAT, LATITUDE FLOAT, LOCATION INT, LONGTITUDE FLOAT, NAME TEXT, SIMILAR FLOAT, TERMS TEXT, FREQ FLOAT'
     );
 
     const tree = {};
@@ -39,7 +60,7 @@ const initArtists = () => {
 
         Database.insertData(
             TABLE,
-            'ID, FAMILIARITY, HOTTNESS, LATITUDE, LOCATION, LONGTITUDE, NAME, SIMILAR, TERMS, FREQ',
+            'ID, FAMILIARITY, HOTTTNESSS, LATITUDE, LOCATION, LONGTITUDE, NAME, SIMILAR, TERMS, FREQ',
             `"${object.id}", ${object.familiarity}, ${object.hotttnesss}, ${object.latitude}, ${object.location}, ${object.longitude}, "${object.name}", ${object.similar}, "${object.terms}", ${object.terms_freq}`
         );
     });

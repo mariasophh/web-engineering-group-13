@@ -8,16 +8,19 @@ const Songs = require('./router/Songs');
 
 app.get('/artists', Artists.getArtists);
 
+app.get('/songs/:id', Songs.getSong);
+app.delete('/songs/:id', Songs.deleteSong);
+
 app.post('/populateDB', (req, res) => {
     Artists.initArtists();
     Releases.initReleases();
     Songs.initSongs();
 
-    res.status(200).send('Populating was successfull');
+    res.status(200).send('Populating was successful!');
 });
 
 app.get('/', (req, res) => {
-    const base = `http://localchost:${PORT}`;
+    const base = `http://localhost:${PORT}`;
     const stack = [];
 
     app._router.stack.forEach(layer => {

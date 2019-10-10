@@ -1,6 +1,10 @@
 const json = require('../assets/music.json');
 const Database = require('../Database');
 
+ /**
+ * This function initialises the RELEASES table and
+ * populates it with the initial given values
+ */
 const initReleases = () => {
     const TABLE = 'RELEASES';
 
@@ -12,7 +16,7 @@ const initReleases = () => {
     );
     // Unique entries
     const tree = {};
-    // Extrack each unique entry
+    // Extract each unique entry
     json.forEach(element => {
         const object = {};
 
@@ -26,7 +30,7 @@ const initReleases = () => {
 
         tree[object.id] = object;
     });
-    // Iterate throught our unique entries
+    // Iterate through our unique entries
     Object.keys(tree).forEach(node => {
         const object = tree[node];
 

@@ -62,6 +62,17 @@ const insertData = (table, prep, data) => {
 };
 
 /**
+ * Delete a row in the table;
+ * @param {String} table 
+ * @param {String} data 
+ */
+const deleteRow = (table, data) => {
+    db.serialize(() => {
+        db.run(`DELETE FROM ${table} WHERE ${data}`);
+    });
+}
+
+/**
  * Delete table if present
  * @param {String} table 
  */
@@ -75,5 +86,6 @@ module.exports = {
     createTable,
     insertData,
     dropTable,
+    deleteRow,
     fetchTable,
 };
