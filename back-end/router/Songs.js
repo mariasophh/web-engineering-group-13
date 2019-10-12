@@ -20,6 +20,13 @@ const getSong = (req, res) => {
     }, `ID = "${id}"`);
 };
 
+const getSongs = (req, res) => {
+    const { id } = req.params;
+    Database.joinTables(id, response => {
+        res.status(200).send(response);
+    });
+};
+
 /**
  * This function deletes a song (row) from the songs table for a given id
  * @param {Array} req 
@@ -81,6 +88,7 @@ const initSongs = () => {
 
 module.exports={
     getSong,
+    getSongs,
     deleteSong,
     initSongs,
 }

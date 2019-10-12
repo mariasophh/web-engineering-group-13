@@ -8,6 +8,26 @@ const db = new sqlite3.Database('./sqlite.db', error => {
     console.log(text);
 });
 
+const _query = async (query, callback) => {
+    const serialize = new Promise((resolve, reject) => {
+        db.serialize(() => {
+            db.all(query, (error, rows) => {
+                if (!error) {
+                    resolve(rows);
+                } else {
+                    reject(error);
+                }
+            });
+        });
+    });
+
+    await serialize.then(response => {
+        callback(response);
+    }).catch(error => {
+        console.log('Internal Error -- ', error);
+    });
+}
+
 /**
  * Fetch the entire table;
  * @param {String} selects 
@@ -19,16 +39,8 @@ const fetchTable = (selects, table, callback, where = null) => {
     const query = where
         ? `SELECT ${selects} FROM ${table} WHERE ${where}`
         : `SELECT ${selects} FROM ${table}`;
-    
-    db.serialize(() => {
-        db.all(query, (error, rows) => {
-            if (!error) {
-                callback(rows);
-            } else {
-                callback(null);
-            }
-        });
-    });
+
+    _query(query, callback);
 };
 
 /**
@@ -40,7 +52,7 @@ const createTable = (table, info) => {
     db.serialize(() => {
         db.run(`CREATE TABLE ${table} (${info})`);
     });
-    
+
 };
 
 /**
@@ -58,7 +70,7 @@ const insertData = (table, prep, data) => {
                 (${data})`
         );
     });
-    
+
 };
 
 /**
@@ -82,10 +94,29 @@ const dropTable = table => {
     });
 };
 
+
+const joinTables = (artistID, callback) => {
+    fetchTable('ID', 'RELEASES', response => {
+        let songs = '';
+        response.forEach((element, i) => {
+            const { ID } = element;
+            const comma = response.length === i + 1
+                ? ''
+                : ', ';
+            songs += ID + comma;
+        });
+       
+        fetchTable('*', 'SONGS', mergedSongs => {
+            callback(mergedSongs);
+        }, `RELEASE_ID IN (${songs})`);
+    }, `ARTIST_ID = "${artistID}"`);
+}
+
 module.exports = {
     createTable,
     insertData,
     dropTable,
     deleteRow,
     fetchTable,
+    joinTables,
 };

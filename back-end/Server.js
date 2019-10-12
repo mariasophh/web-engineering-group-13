@@ -11,6 +11,8 @@ app.get('/artists', Artists.getArtists);
 app.get('/songs/:id', Songs.getSong);
 app.delete('/songs/:id', Songs.deleteSong);
 
+app.get('/songs/artists/:id', Songs.getSongs);
+
 app.post('/populateDB', (req, res) => {
     Artists.initArtists();
     Releases.initReleases();
