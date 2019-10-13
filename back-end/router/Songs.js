@@ -20,12 +20,39 @@ const getSong = (req, res) => {
     }, `ID = "${id}"`);
 };
 
+const updateSong = (req, res) => {
+    const { body } = req;
+    const { id } = req.params;
+    let set = '';
+    
+    Object.keys(body).forEach((param, i) => {
+        const comma = Object.keys(body).length === i + 1
+            ? ''
+            : ', ';
+
+        set += `${param.toUpperCase()} = ${body[param]}${comma}`;
+    });
+    
+    Database.updateTable(TABLE, set, () => {
+        res.status(200).send(`SONG WITH ID ${id} SUCCESSFULLY UPDATED`);
+    }, `ID = "${id}"`);
+};
+
 const getSongs = (req, res) => {
     const { id } = req.params;
+
     Database.joinTables(id, response => {
         res.status(200).send(response);
     });
 };
+
+const getYearSongs = (req, res) => {
+    const { year } = req.params;
+
+    Database.fetchTable('*', TABLE, response => {
+        res.status(200).send(response);
+    }, `YEAR = ${year}`);
+}
 
 /**
  * This function deletes a song (row) from the songs table for a given id
@@ -88,7 +115,9 @@ const initSongs = () => {
 
 module.exports={
     getSong,
+    updateSong,
     getSongs,
     deleteSong,
+    getYearSongs,
     initSongs,
 }

@@ -1,18 +1,29 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
 const PORT = 3000;
 
+// Configuration for body parsing and default origins
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json());
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
+// Route specific functions for each request
 const Artists = require('./router/Artists');
 const Releases = require('./router/Releases');
 const Songs = require('./router/Songs');
 
+// API
 app.get('/artists', Artists.getArtists);
-
 app.get('/songs/:id', Songs.getSong);
+app.put('/songs/:id', Songs.updateSong);
 app.delete('/songs/:id', Songs.deleteSong);
-
+app.get('/songs/year/:year', Songs.getYearSongs)
 app.get('/songs/artists/:id', Songs.getSongs);
-
 app.post('/populateDB', (req, res) => {
     Artists.initArtists();
     Releases.initReleases();

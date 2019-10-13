@@ -9,16 +9,29 @@ const TABLE = 'ARTISTS';
  * @param {Array} res 
  */
 const getArtists = (req, res) => {
+    const { contentType, rankBy, order, offset, limit } = req.query;
     let where = '';
-    const { contentType } = req.query;
+    let orderBy = '';
+
+    if (!rankBy) {
+        // parse possible query parameters for filtering 
+        Object.keys(req.query).forEach((key, i) => {
+            if (i > 0) where += " AND ";
+
+            where += `${key.toUpperCase()} = "${req.query[key]}"`;
+        });
+    } else {
+        // query parameters for ordering the data and limiting the data with an offset
+        orderBy = ` ORDER BY ${rankBy.toUpperCase()} ${order ? order.toUpperCase() : 'DESC'}`;
+        if (limit && limit != 'end') {
+            orderBy += ` LIMIT ${limit}`;
+        }
+        if (offset && offset !== 'start' && limit && limit != 'end') {
+            orderBy += ` OFFSET ${offset}`;
+        }
+    }
     
-    // parse possible query parameters for filtering 
-    Object.keys(req.query).forEach((key, i) => {
-        if (i > 0) where += " AND ";
-        where += `${key.toUpperCase()} = "${req.query[key]}"`;
-    });
-    
-    Database.fetchTable('*', TABLE, response => {
+    Database.fetchTable('*', TABLE + orderBy, response => {
         res.status(200).send((contentType && contentType === 'csv')
             ? Utilities.toCSV(response)
             : response

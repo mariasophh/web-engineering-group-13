@@ -39,9 +39,24 @@ const fetchTable = (selects, table, callback, where = null) => {
     const query = where
         ? `SELECT ${selects} FROM ${table} WHERE ${where}`
         : `SELECT ${selects} FROM ${table}`;
-
+    
     _query(query, callback);
 };
+
+/**
+ * Update a table
+ * @param {*} table 
+ * @param {*} set 
+ * @param {*} callback 
+ * @param {*} where 
+ */
+const updateTable = (table, set, callback, where = null) => {
+    const query = where
+        ? `UPDATE ${table} SET ${set} WHERE ${where}`
+        : `UPDATE ${TABLE} SET ${set}`;
+
+    _query(query, callback);
+} 
 
 /**
  * Create the table with the integrity types;
@@ -94,7 +109,11 @@ const dropTable = table => {
     });
 };
 
-
+/**
+ * 
+ * @param {*} artistID 
+ * @param {*} callback 
+ */
 const joinTables = (artistID, callback) => {
     fetchTable('ID', 'RELEASES', response => {
         let songs = '';
@@ -113,6 +132,7 @@ const joinTables = (artistID, callback) => {
 }
 
 module.exports = {
+    updateTable,
     createTable,
     insertData,
     dropTable,
