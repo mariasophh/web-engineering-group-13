@@ -3,10 +3,13 @@
 .DS_Store?
 
 #VSCode
-.vscode
+.vscode/
 
-#Flask
-instance/
-.webassets-cache
+package-lock.json
+.db
+
+/node_modules
+/assets
+
 
 

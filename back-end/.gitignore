@@ -1,0 +1,8 @@
+# Node modules
+\node_modules
+
+# All assets
+\assets
+
+# The db
+*.db
