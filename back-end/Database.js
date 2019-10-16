@@ -131,6 +131,29 @@ const joinTables = (artistID, callback) => {
     }, `ARTIST_ID = "${artistID}"`);
 }
 
+/**
+ * This function will fetch all the songs by artists 
+ * in a specific genre (filtered by terms)
+ * @param {String} terms 
+ * @param {Function} callback 
+ */
+const filterByTerms = (terms, callback) => {
+    fetchTable('ID', 'ARTISTS', response => {
+        let songs = [];
+        const length = response.length;
+
+        for (let i = 0; i < length; i++) {
+            const { ID } = response[i];
+            
+            joinTables(ID, res => {
+                songs = songs.concat(res);
+                
+                if (i + 1 === length) callback(songs);
+            });
+        }
+    }, `TERMS = "${terms}"`);
+}
+
 module.exports = {
     updateTable,
     createTable,
@@ -139,4 +162,5 @@ module.exports = {
     deleteRow,
     fetchTable,
     joinTables,
+    filterByTerms,
 };

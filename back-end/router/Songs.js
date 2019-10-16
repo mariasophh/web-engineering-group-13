@@ -45,6 +45,23 @@ const updateSong = (req, res) => {
 };
 
 /**
+ * This function gets all the songs by all artists in a given genre
+ * @param {Array} req 
+ * @param {Array} res 
+ */
+const getSongsTerm = (req, res) => {
+    const { terms } = req.params;
+    const { contentType } = req.query;
+
+    Database.filterByTerms(terms, response => {
+        res.status(200).send((contentType && contentType === 'csv')
+            ? Utilities.toCSV(response)
+            : response
+        );
+    })
+}
+
+/**
  * This function gets all the songs by a specific artist
  * @param {Array} req 
  * @param {Array} res 
@@ -141,6 +158,7 @@ module.exports={
     getSong,
     updateSong,
     getSongs,
+    getSongsTerm,
     deleteSong,
     getYearSongs,
     initSongs,
