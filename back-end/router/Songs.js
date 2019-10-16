@@ -52,8 +52,6 @@ const updateSong = (req, res) => {
 const getSongs = (req, res) => {
     const { id } = req.params;
     const { contentType, year } = req.query;
-
-    console.log(year);
     
     Database.joinTables(id, response => {
         res.status(200).send((contentType && contentType === 'csv')
@@ -70,14 +68,30 @@ const getSongs = (req, res) => {
  */
 const getYearSongs = (req, res) => {
     const { year } = req.params;
-    const { contentType } = req.query;
+    const { contentType, rankBy, order, offset, limit } = req.query;
+    let orderBy = '';
+
+    // remove contentType property for database filtering
+    if(contentType) delete req.query.contentType;
+    
+    if (rankBy) {
+        // query parameters for ordering the data and limiting the data with an offset
+        orderBy = ` ORDER BY ${rankBy.toUpperCase()} ${order ? order.toUpperCase() : 'DESC'}`;
+        
+        if (limit && limit != 'end') {
+            orderBy += ` LIMIT ${limit}`;
+        }
+        if (offset && offset !== 'start' && limit && limit != 'end') {
+            orderBy += ` OFFSET ${offset}`;
+        }
+    }
 
     Database.fetchTable('*', TABLE, response => {
         res.status(200).send((contentType && contentType === 'csv')
             ? Utilities.toCSV(response)
             : response
         );
-    }, `YEAR = ${year}`);
+    }, `YEAR = ${year}` + orderBy);
 }
 
 /**
