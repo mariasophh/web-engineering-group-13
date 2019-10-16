@@ -45,10 +45,10 @@ const fetchTable = (selects, table, callback, where = null) => {
 
 /**
  * Update a table
- * @param {*} table 
- * @param {*} set 
- * @param {*} callback 
- * @param {*} where 
+ * @param {String} table 
+ * @param {String} set 
+ * @param {Function} callback 
+ * @param {String} where 
  */
 const updateTable = (table, set, callback, where = null) => {
     const query = where
@@ -110,9 +110,9 @@ const dropTable = table => {
 };
 
 /**
- * 
- * @param {*} artistID 
- * @param {*} callback 
+ * This function will fetch all the songs by an artist
+ * @param {String} artistID 
+ * @param {Function} callback 
  */
 const joinTables = (artistID, callback) => {
     fetchTable('ID', 'RELEASES', response => {

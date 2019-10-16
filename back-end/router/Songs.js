@@ -20,6 +20,12 @@ const getSong = (req, res) => {
     }, `ID = "${id}"`);
 };
 
+/**
+ * This function updates the attributes of a song given in the 
+ * request body
+ * @param {Array} req 
+ * @param {Array} res 
+ */
 const updateSong = (req, res) => {
     const { body } = req;
     const { id } = req.params;
@@ -38,19 +44,37 @@ const updateSong = (req, res) => {
     }, `ID = "${id}"`);
 };
 
+/**
+ * This function gets all the songs by a specific artist
+ * @param {Array} req 
+ * @param {Array} res 
+ */
 const getSongs = (req, res) => {
     const { id } = req.params;
+    const { contentType } = req.params;
 
     Database.joinTables(id, response => {
-        res.status(200).send(response);
+        res.status(200).send((contentType && contentType === 'csv')
+            ? Utilities.toCSV(response)
+            : response
+        );
     });
 };
 
+/**
+ * This function gets all the songs in a specific year
+ * @param {Array} req 
+ * @param {Array} res 
+ */
 const getYearSongs = (req, res) => {
     const { year } = req.params;
+    const { contentType } = req.query;
 
     Database.fetchTable('*', TABLE, response => {
-        res.status(200).send(response);
+        res.status(200).send((contentType && contentType === 'csv')
+            ? Utilities.toCSV(response)
+            : response
+        );
     }, `YEAR = ${year}`);
 }
 
