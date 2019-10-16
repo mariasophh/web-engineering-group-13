@@ -13,6 +13,9 @@ const getArtists = (req, res) => {
     let where = '';
     let orderBy = '';
 
+    // remove contentType property for database filtering
+    if(contentType) delete req.query.contentType;
+    
     if (!rankBy) {
         // parse possible query parameters for filtering 
         Object.keys(req.query).forEach((key, i) => {
