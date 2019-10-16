@@ -114,9 +114,10 @@ const dropTable = table => {
  * @param {String} artistID 
  * @param {Function} callback 
  */
-const joinTables = (artistID, callback) => {
+const joinTables = (artistID, callback, year = null) => {
     fetchTable('ID', 'RELEASES', response => {
         let songs = '';
+
         response.forEach((element, i) => {
             const { ID } = element;
             const comma = response.length === i + 1
@@ -125,9 +126,13 @@ const joinTables = (artistID, callback) => {
             songs += ID + comma;
         });
        
+        const where = year 
+        ? `RELEASE_ID IN (${songs}) AND YEAR=${year}`
+        : `RELEASE_ID IN (${songs})`;
+
         fetchTable('*', 'SONGS', mergedSongs => {
             callback(mergedSongs);
-        }, `RELEASE_ID IN (${songs})`);
+        }, where);
     }, `ARTIST_ID = "${artistID}"`);
 }
 
