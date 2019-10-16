@@ -42,6 +42,13 @@ const getArtists = (req, res) => {
     }, where === '' ? null : where);
 };
 
+const getStatistics = (req, res) => {
+    const { id } = req.params;
+    const { year, contentType } = req.query;
+
+    
+};
+
 /**
  * This function initialises the ARTISTS table and
  * populates it with the initial given values
