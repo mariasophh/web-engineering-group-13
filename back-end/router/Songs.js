@@ -51,14 +51,16 @@ const updateSong = (req, res) => {
  */
 const getSongs = (req, res) => {
     const { id } = req.params;
-    const { contentType } = req.params;
+    const { contentType, year } = req.query;
 
+    console.log(year);
+    
     Database.joinTables(id, response => {
         res.status(200).send((contentType && contentType === 'csv')
             ? Utilities.toCSV(response)
             : response
         );
-    });
+    }, year);
 };
 
 /**
