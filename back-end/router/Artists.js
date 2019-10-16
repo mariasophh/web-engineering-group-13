@@ -50,11 +50,21 @@ const getArtists = (req, res) => {
     }, where === '' ? null : where);
 };
 
+/**
+ * This function returns descriptive statistics of the songs of an artist
+ * @param {Array} req 
+ * @param {Array} res 
+ */
 const getStatistics = (req, res) => {
     const { id } = req.params;
     const { year, contentType } = req.query;
 
-    
+    Database.returnStatistics(id, response => {
+        res.status(200).send((contentType && contentType === 'csv')
+            ? Utilities.toCSV(response)
+            : response
+        );
+    }, year);
 };
 
 /**
@@ -100,4 +110,5 @@ const initArtists = () => {
 module.exports = {
     getArtists,
     initArtists,
+    getStatistics,
 };

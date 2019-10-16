@@ -1,4 +1,5 @@
 const sqlite3 = require('sqlite3').verbose();
+const stat = require('simple-statistics');
 
 const db = new sqlite3.Database('./sqlite.db', error => {
     const text = error
@@ -134,7 +135,7 @@ const joinTables = (artistID, callback, year = null) => {
             callback(mergedSongs);
         }, where);
     }, `ARTIST_ID = "${artistID}"`);
-}
+};
 
 /**
  * This function will fetch all the songs by artists 
@@ -157,7 +158,33 @@ const filterByTerms = (terms, callback) => {
             });
         }
     }, `TERMS = "${terms}"`);
-}
+};
+
+/**
+ * This function will return descriptive statistics 
+ * retrived from the database entries
+ * @param {String} id 
+ * @param {Function} callback 
+ * @param {Integer | Optional} year 
+ */
+const returnStatistics = (id, callback, year = null) => {
+    joinTables(id, response => {
+        let statistics = {}, popularity = [];
+        const length = response.length;
+
+        for(let i=0; i < length; i++) {
+            const { HOTTTNESSS } = response[i];
+            popularity.push(HOTTTNESSS);
+
+            if(i + 1 === length) {
+                statistics.MEAN = stat.mean(popularity);
+                statistics.MEDIAN = stat.median(popularity);
+                statistics.STD = stat.standardDeviation(popularity);
+                callback(statistics);
+            }
+        }
+    }, year);
+};
 
 module.exports = {
     updateTable,
@@ -168,4 +195,5 @@ module.exports = {
     fetchTable,
     joinTables,
     filterByTerms,
+    returnStatistics,
 };
