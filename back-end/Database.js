@@ -114,6 +114,7 @@ const dropTable = table => {
  * This function will fetch all the songs by an artist
  * @param {String} artistID 
  * @param {Function} callback 
+ * @param {Integer | Optional} year
  */
 const joinTables = (artistID, callback, year = null) => {
     fetchTable('ID', 'RELEASES', response => {
