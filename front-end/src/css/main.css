@@ -1,0 +1,225 @@
+body,
+html {
+    height: 100%;
+	min-height: 100%;
+	width: 100%;
+    padding: 0;
+    margin: 0;
+    font-size: 16px;
+    color: rgb(34, 34, 34);
+    font-family: "NeueEinstellung", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue",
+    Helvetica, Arial, "Lucida Grande", sans-serif;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+}
+
+section {
+    width: inherit;
+    height: auto;
+}
+
+button,
+a {
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+    color: black;
+}
+
+h1,
+h3, 
+h4, 
+h5, 
+h6 {
+    padding: 0;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+h1 {
+    margin: 70px 0 20px 0;
+    font-size: 55px;
+}
+
+img {
+    margin: 70px 0 -70px 0;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    object-position: center;
+    padding: 0;
+    border-radius: 50%;
+}
+
+input {
+	border: none;
+    outline: none;
+    border-radius: 0;
+}
+
+input[type="text"] {
+    padding: 12px 0;
+    width: 100%;
+    font-size: 21px;
+    border-bottom: 2px solid lightgray;
+}
+
+input[type="text"]:valid {
+    border-bottom: 2px solid black;
+}
+
+input:disabled {
+    background: lightgray;
+    border-bottom: 2px solid darkgray;
+}
+
+table {
+  border-collapse: collapse;
+  font-size: 21px;
+}
+
+tr {
+  border-bottom: 1px solid #ccc;
+}
+
+th, td {
+  text-align: left;
+  padding: 4px;
+}
+
+select {
+    padding: 12px 6px 12px 8px;
+	margin: 0;
+	border: 2px solid black;
+	background: none;
+	appearance: none;
+	outline: none;
+	border-radius: 0px;
+	font-size: 21px;
+	color: black;
+	width: 100%;
+	cursor: pointer;
+}
+
+p {
+    font-size: 21px;
+    line-height: 27px;
+}
+
+button {
+    font-size: 16px;
+    padding: 16px 0;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    font-weight: 300;
+}
+
+.container {
+    width: 1000px;
+    height: inherit;
+}
+
+.flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    flex-direction: row;
+}
+
+.column {
+    flex-direction: column;
+}
+
+.exit {
+	position: fixed;
+	top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* z-index: -1; */
+    background: rgba(34, 34, 34, 0.3);
+}
+
+.table {
+    margin-top: 20px;
+    width: 50%;
+}
+
+/*  */
+
+.select-container {
+    margin-top: 20px;
+    width: 56%;
+}
+
+.selector-container {
+    width: 100%;
+}
+
+.selector-container .selected,
+.selector-container .selector {
+    width: 25%;
+    height: 100px;
+    font-size: 34px;
+    margin: 0 3%;
+}
+
+.selector-container .selected {
+   background: black;
+   color: white;
+}
+
+.statistics-container {
+    width: 50%;
+    justify-content: space-between;
+}
+
+.statistics-container .statistics {
+    width: 150px;
+    height: 100px;
+    background: lightgray;
+}
+
+.statistics-container .statistics h3 {
+    margin-bottom: 20px;
+}
+
+.search-container {
+    margin-top: 20px;
+    width: 56%;
+}
+
+.search-container .card-container,
+.search-container .recomendations {
+    width: 100%;
+}
+
+.search-container .card-container .item-complex,
+.search-container .card-container .item,
+.search-container .card-container h3 {
+    text-transform: capitalize;
+    font-size: 21px;
+    width: 95%;
+    padding-left: 5%;
+    background: gray;
+}
+
+.search-container .card-container .item-complex,
+.search-container .card-container .item {
+    font-size: 18px;
+    justify-content: flex-start;
+    padding: 5px 0 5px 5%;
+    pointer-events: none;
+    background: lightgray;
+}
+
+.search-container .card-container .item-complex {
+    pointer-events: all;
+}
+
+.search-container .card-container .item-complex:hover {
+    background: darkgray;
+}
+

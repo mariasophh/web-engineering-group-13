@@ -79,6 +79,26 @@ const getSongs = (req, res) => {
 };
 
 /**
+ * This function gets all the songs.
+ * @param {Array} req 
+ * @param {Array} res 
+ */
+const getAllSongs = (req, res) => {
+    const { contentType } = req.query;
+
+    Database.fetchTable(
+        'TITLE AS NAME, HOTTTNESSS, YEAR',
+        TABLE,
+        response => {
+            res.status(200).send((contentType && contentType === 'csv')
+                ? Utilities.toCSV(response)
+                : response
+            );
+        }
+    );
+};
+
+/**
  * This function gets all the songs in a specific year
  * @param {Array} req 
  * @param {Array} res 
@@ -177,5 +197,6 @@ module.exports={
     getSongsTerm,
     deleteSong,
     getYearSongs,
+    getAllSongs,
     initSongs,
 }
