@@ -61,7 +61,7 @@ input[type="text"] {
     padding: 12px 0;
     width: 100%;
     font-size: 21px;
-    border-bottom: 2px solid lightgray;
+    border-bottom: 2px solid lightgray !important;
 }
 
 input[type="text"]:valid {
@@ -70,7 +70,7 @@ input[type="text"]:valid {
 
 input:disabled {
     background: lightgray;
-    border-bottom: 2px solid darkgray;
+    border-bottom: 2px solid darkgray !important;
 }
 
 table {
@@ -79,7 +79,7 @@ table {
 }
 
 tr {
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #ccc !important;
 }
 
 th, td {
@@ -179,7 +179,7 @@ button {
 .statistics-container .statistics {
     width: 150px;
     height: 100px;
-    background: lightgray;
+    background: lightgray !important;
 }
 
 .statistics-container .statistics h3 {
@@ -203,7 +203,7 @@ button {
     font-size: 21px;
     width: 95%;
     padding-left: 5%;
-    background: gray;
+    background: gray !important;
 }
 
 .search-container .card-container .item-complex,
@@ -212,7 +212,7 @@ button {
     justify-content: flex-start;
     padding: 5px 0 5px 5%;
     pointer-events: none;
-    background: lightgray;
+    background: lightgray !important;
 }
 
 .search-container .card-container .item-complex {
@@ -220,6 +220,6 @@ button {
 }
 
 .search-container .card-container .item-complex:hover {
-    background: darkgray;
+    background: darkgray !important;
 }
 

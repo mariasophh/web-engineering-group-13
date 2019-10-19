@@ -1,6 +1,9 @@
 # general information about the project with instructions on how to run the code
 This repository contains the project for group 13 (Maria Sophia Stefan s3413896 & Anda-Amelia Palamariuc s3443817).
-Both the back-end and the front-end listen to port 8081.
+
+# ports
+The backend listens to port 8081.
+The frontend listens to port 3000.
 
 # documents
 The final version of the documents can be found in the documents directory, updated in accordance to the latest received feedback after each milestone deadline.

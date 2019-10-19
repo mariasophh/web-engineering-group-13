@@ -85,7 +85,7 @@ export default class Search extends PureComponent {
                             <div className="select-container flex">
                                 {
                                     Select({
-                                        value: value === '' ? 'Select ' + selector + ' genre' : value,
+                                        value: value === '' ? 'Select ' + selector + (selector === 'artists' ? ' genre' : ' year') : value,
                                         type: selector,
                                         onChange: this.changeState,
                                     })
