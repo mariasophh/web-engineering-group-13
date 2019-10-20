@@ -18,8 +18,6 @@ const getArtists = (req, res) => {
     
     if (!rankBy) {
 
-        console.log("No rank by");
-
         // parse possible query parameters for filtering 
         Object.keys(req.query).forEach((key, i) => {
             if (i > 0) where += " AND ";
@@ -27,8 +25,6 @@ const getArtists = (req, res) => {
             where += `${key.toUpperCase()} = "${req.query[key]}"`;
         });
     } else {
-
-        console.log("rank by");
 
         // query parameters for ordering the data and limiting the data with an offset
         orderBy = ` ORDER BY ${rankBy.toUpperCase()} ${order ? order.toUpperCase() : 'DESC'}`;
@@ -39,8 +35,6 @@ const getArtists = (req, res) => {
             orderBy += ` OFFSET ${offset}`;
         }
     }
-
-    console.log(`Artists: ${orderBy}`);
     
     Database.fetchTable('*', TABLE + orderBy, response => {
         res.status(200).send((contentType && contentType === 'csv')

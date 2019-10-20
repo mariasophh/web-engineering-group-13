@@ -22,7 +22,11 @@ export const fetchKeywordSuggestions = (query, callback, key, optional = null) =
 }
 
 export const getImage = (query='Michael Jackson', callback) => {
-    const path = `https://pixabay.com/api/?key=${KEY}&q=${query.toLowerCase()}&image_type=photo`;
+    // format the query 
+    let formatted_query = query.toLowerCase().replace(/ /g, "+");
+
+    const path = `https://pixabay.com/api/?key=${KEY}&q=${formatted_query.toLowerCase()}&image_type=photo`;
+    console.log(path);
     fetch(PROXY + path)
     .then(res => res.text())
     .then(res => res

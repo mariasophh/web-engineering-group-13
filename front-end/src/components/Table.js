@@ -4,7 +4,7 @@ export const Table = items => (
     <table className="table">
         <thead>
             <tr key={-1}>
-                <th>Hotness</th>
+                <th>Hottness</th>
                 <th>Title</th>
                 <th>Year</th>
             </tr>
