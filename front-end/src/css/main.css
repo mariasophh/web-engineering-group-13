@@ -61,7 +61,7 @@ input[type="text"] {
     padding: 12px 0;
     width: 100%;
     font-size: 21px;
-    border-bottom: 2px solid lightgray !important;
+    border-bottom: 2px solid lightgray;
 }
 
 input[type="text"]:valid {
@@ -70,7 +70,7 @@ input[type="text"]:valid {
 
 input:disabled {
     background: lightgray;
-    border-bottom: 2px solid darkgray !important;
+    border-bottom: 2px solid darkgray;
 }
 
 table {
@@ -79,7 +79,7 @@ table {
 }
 
 tr {
-  border-bottom: 1px solid #ccc !important;
+  border-bottom: 1px solid #ccc;
 }
 
 th, td {
@@ -164,6 +164,7 @@ button {
     height: 100px;
     font-size: 34px;
     margin: 0 3%;
+    background: gray;
 }
 
 .selector-container .selected {
@@ -179,7 +180,7 @@ button {
 .statistics-container .statistics {
     width: 150px;
     height: 100px;
-    background: lightgray !important;
+    background: lightgray;
 }
 
 .statistics-container .statistics h3 {
@@ -203,7 +204,7 @@ button {
     font-size: 21px;
     width: 95%;
     padding-left: 5%;
-    background: gray !important;
+    background: gray;
 }
 
 .search-container .card-container .item-complex,
@@ -211,8 +212,15 @@ button {
     font-size: 18px;
     justify-content: flex-start;
     padding: 5px 0 5px 5%;
-    pointer-events: none;
-    background: lightgray !important;
+    background: lightgray;
+}
+
+.search-container .card-container .item button {
+    width: auto;
+    height: auto;
+    background: none;
+    margin-left: auto;
+    margin-right: 28px;
 }
 
 .search-container .card-container .item-complex {
@@ -220,6 +228,6 @@ button {
 }
 
 .search-container .card-container .item-complex:hover {
-    background: darkgray !important;
+    background: darkgray;
 }
 

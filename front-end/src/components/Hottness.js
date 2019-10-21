@@ -5,7 +5,7 @@ import { fetchKeywordSuggestions } from '../requests/Requests';
 import { Select } from './Select';
 import { Recommendations } from './Recommendations';
 
-export default class Search extends PureComponent {
+export default class Hottness extends PureComponent {
 
     state = {
         term: '',
@@ -33,6 +33,15 @@ export default class Search extends PureComponent {
                         data: null,
                     }
                 }
+
+                if (value === 'artists') {
+                    fetchKeywordSuggestions(
+                        value,
+                        this.changeState,
+                        'data',
+                        '?rankBy=hotttnesss&order=desc&offset=20&limit=50'
+                    );
+                }
                 break;
             
             case 'value':
@@ -41,9 +50,7 @@ export default class Search extends PureComponent {
                         this.state.selector,
                         this.changeState,
                         'data',
-                        value === 'All genres'
-                            ? ''
-                            : `?terms=${value}`
+                        `/year/${value}/?rankBy=hotttnesss&order=desc&offset=0&limit=50`
                     );
                 }
                 break;
@@ -58,7 +65,7 @@ export default class Search extends PureComponent {
     filterRecommendations = (term, suggestions) => (
         suggestions.filter(suggestion => (
             suggestion.NAME.toLowerCase().search(term.toLowerCase()) !== -1
-        )).splice(0, 10)
+        ))
     )
 
     render() {
@@ -69,24 +76,17 @@ export default class Search extends PureComponent {
                 ? "selected " + defaultClass
                 : defaultClass
         );
-
-        const redirect = (e, path) => {
-            e.preventDefault();
-
-            this.props.history.push(path);
-        }
         
         return (
             <>
                 <section className="flex">
                     <div className="container column flex">
-                        <h1>Category</h1>
-                        <a onClick={e => redirect(e, '/hottness')} href="#">View hottness ranks</a>
+                        <h1>Hottness</h1>
                         <div className="selector-container flex">
                             <button onClick={e => this.changeState(e, 'selector', 'artists')} className={className("artists")}>Artists</button>
                             <button onClick={e => this.changeState(e, 'selector', 'songs')} className={className("songs")}>Songs</button>
                         </div>
-                        { selector !== null && (
+                        { (selector !== null && selector !== 'artists') && (
                             <div className="select-container flex">
                                 {
                                     Select({
@@ -97,10 +97,9 @@ export default class Search extends PureComponent {
                                 }
                             </div>
                         )}
-                        { (selector !== null && value !== '') && (
+                        { selector !== null && (
                             <form className="search-container column flex">
-                                <input onChange={e => this.changeState(e, 'term', e.target.value)} value={term} type="text" placeholder={`Search by ${selector} ...`} />
-                                {(data && term !== '') &&
+                                {data &&
                                     Recommendations(
                                         selector, 
                                         this.filterRecommendations(term, data),

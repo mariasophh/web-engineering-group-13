@@ -77,7 +77,7 @@ const getAllSongs = (req, res) => {
     const { contentType } = req.query;
 
     Database.fetchTable(
-        'TITLE AS NAME, HOTTTNESSS, YEAR',
+        'TITLE AS NAME, HOTTTNESSS, YEAR, ID',
         TABLE,
         response => {
             Utilities.responseHandlingGET(res, response, contentType);
@@ -111,7 +111,7 @@ const getYearSongs = (req, res) => {
         }
     }
 
-    Database.fetchTable('*', TABLE, response => {
+    Database.fetchTable('ID, TITLE AS NAME', TABLE, response => {
         Utilities.responseHandlingGET(res, response, contentType);
     }, `YEAR = ${year}` + orderBy);
 }

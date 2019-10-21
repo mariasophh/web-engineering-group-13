@@ -15,6 +15,7 @@ export const Router = () => (
     <BrowserRouter>
         <Switch>
             <Route exact path="/" render={props => Import({ name: 'Search', ...props })} />
+            <Route exact path="/hottness" render={props => Import({ name: 'Hottness', ...props })} />
             <Route exact path="/:artist/:id" render={props => Import({ name: 'Artist', ...props })} />
         </Switch>
     </BrowserRouter>

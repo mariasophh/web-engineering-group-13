@@ -1,4 +1,5 @@
 import React from 'react';
+import { deleteRow } from '../requests/Requests'
 
 const redirect = (e, history, item) => {
     e.preventDefault();
@@ -10,10 +11,15 @@ const redirect = (e, history, item) => {
 export const Recommendations = (key, array, history) => (
     !!array.length && (
         <div key={key} className="card-container flex column">
-            <h3>{key}</h3>
+            <h3>{key} ({array.length})</h3>
             {array.map(item => key === 'artists' 
                 ? <a onClick={e => redirect(e, history, item)} key={item.NAME} className="item-complex flex" href="#">{item.NAME}</a>
-                : <span key={item.NAME} className="item flex">{item.NAME}</span>
+                : (
+                    <div key={item.NAME} className="item flex">
+                        <span>{item.NAME}</span>
+                        <button onClick={e => deleteRow(e, `songs/${item.ID}`)}>DELETE</button>
+                    </div>
+                )
             )}
         </ div>
     )

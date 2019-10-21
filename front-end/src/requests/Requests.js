@@ -26,7 +26,7 @@ export const getImage = (query='Michael Jackson', callback) => {
     let formatted_query = query.toLowerCase().replace(/ /g, "+");
 
     const path = `https://pixabay.com/api/?key=${KEY}&q=${formatted_query.toLowerCase()}&image_type=photo`;
-    console.log(path);
+    
     fetch(PROXY + path)
     .then(res => res.text())
     .then(res => res
@@ -39,4 +39,19 @@ export const getImage = (query='Michael Jackson', callback) => {
         }
     })
     .catch(error => console.error(error));;
+}
+
+export const deleteRow = (e, path) => {
+    fetch(BASE + path, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+    .then(res => {
+        console.log(res);
+    })
+    .catch(err => {
+        console.log(err);
+    });
 }
