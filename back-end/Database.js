@@ -9,6 +9,11 @@ const db = new sqlite3.Database('./sqlite.db', error => {
     console.log(text);
 });
 
+/**
+ * This function will perform any query on the database (synchronously);
+ * @param {String} query 
+ * @param {Function} callback 
+ */
 const _query = async (query, callback) => {
     const serialize = new Promise((resolve, reject) => {
         db.serialize(() => {
@@ -25,12 +30,13 @@ const _query = async (query, callback) => {
     await serialize.then(response => {
         callback(response);
     }).catch(error => {
+        callback("error"); // return error for response handling
         console.log('Internal Error -- ', error);
     });
 }
 
 /**
- * Fetch the entire table;
+ * Fetch a table (by SELECT clause and optionally WHERE clause);
  * @param {String} selects 
  * @param {String} table 
  * @param {Function} callback 
@@ -94,14 +100,14 @@ const insertData = (table, prep, data) => {
  * @param {String} table 
  * @param {String} data 
  */
-const deleteRow = (table, data) => {
-    db.serialize(() => {
-        db.run(`DELETE FROM ${table} WHERE ${data}`);
-    });
+const deleteRow = (table, data, callback) => {
+    const query = `DELETE FROM ${table} WHERE ${data}`;
+
+    _query(query, callback);
 }
 
 /**
- * Delete table if present
+ * Delete table if present;
  * @param {String} table 
  */
 const dropTable = table => {

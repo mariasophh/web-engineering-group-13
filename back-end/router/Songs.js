@@ -5,26 +5,22 @@ const TABLE = 'SONGS';
 
 /**
  * This function queries the songs table and retrieves a song with a given id
- * @param {Array} req 
- * @param {Array} res 
+ * @param {Object} req 
+ * @param {Object} res 
  */
 const getSong = (req, res) => {
     const { id } = req.params;
     const { contentType } = req.query;
     
     Database.fetchTable('*', TABLE, response => {
-        res.status(200).send((contentType && contentType === 'csv')
-            ? Utilities.toCSV(response)
-            : response
-        );
+        Utilities.responseHandlingGET(res, response, contentType);
     }, `ID = "${id}"`);
 };
 
 /**
- * This function updates the attributes of a song given in the 
- * request body
- * @param {Array} req 
- * @param {Array} res 
+ * This function updates the attributes of a song given the request;
+ * @param {Object} req 
+ * @param {Object} res 
  */
 const updateSong = (req, res) => {
     const { body } = req;
@@ -39,49 +35,43 @@ const updateSong = (req, res) => {
         set += `${param.toUpperCase()} = ${body[param]}${comma}`;
     });
     
-    Database.updateTable(TABLE, set, () => {
-        res.status(200).send(`SONG WITH ID ${id} SUCCESSFULLY UPDATED`);
+    Database.updateTable(TABLE, set, response => {
+        Utilities.responseHandlingCUD(res, response);
     }, `ID = "${id}"`);
 };
 
 /**
- * This function gets all the songs by all artists in a given genre
- * @param {Array} req 
- * @param {Array} res 
+ * This function gets all the songs by all artists in a given genre;
+ * @param {Object} req 
+ * @param {Object} res 
  */
 const getSongsTerm = (req, res) => {
     const { terms } = req.params;
     const { contentType } = req.query;
 
     Database.filterByTerms(terms, response => {
-        res.status(200).send((contentType && contentType === 'csv')
-            ? Utilities.toCSV(response)
-            : response
-        );
+        Utilities.responseHandlingGET(res, response, contentType);
     })
 }
 
 /**
- * This function gets all the songs by a specific artist
- * @param {Array} req 
- * @param {Array} res 
+ * This function gets all the songs by a specific artist;
+ * @param {Object} req 
+ * @param {Object} res 
  */
 const getSongs = (req, res) => {
     const { id } = req.params;
     const { contentType, year } = req.query;
     
     Database.joinTables(id, response => {
-        res.status(200).send((contentType && contentType === 'csv')
-            ? Utilities.toCSV(response)
-            : response
-        );
+        Utilities.responseHandlingGET(res, response, contentType);
     }, year);
 };
 
 /**
- * This function gets all the songs.
- * @param {Array} req 
- * @param {Array} res 
+ * This function gets all the songs in the database;
+ * @param {Object} req 
+ * @param {Object} res 
  */
 const getAllSongs = (req, res) => {
     const { contentType } = req.query;
@@ -90,18 +80,16 @@ const getAllSongs = (req, res) => {
         'TITLE AS NAME, HOTTTNESSS, YEAR',
         TABLE,
         response => {
-            res.status(200).send((contentType && contentType === 'csv')
-                ? Utilities.toCSV(response)
-                : response
-            );
+            Utilities.responseHandlingGET(res, response, contentType);
         }
     );
 };
 
 /**
- * This function gets all the songs in a specific year
- * @param {Array} req 
- * @param {Array} res 
+ * This function gets all the songs in a specific year;
+ * with the possibility of retrieving ranked results in a [offset, limit] interval;
+ * @param {Object} req 
+ * @param {Object} res 
  */
 const getYearSongs = (req, res) => {
     const { year } = req.params;
@@ -124,28 +112,25 @@ const getYearSongs = (req, res) => {
     }
 
     Database.fetchTable('*', TABLE, response => {
-        res.status(200).send((contentType && contentType === 'csv')
-            ? Utilities.toCSV(response)
-            : response
-        );
+        Utilities.responseHandlingGET(res, response, contentType);
     }, `YEAR = ${year}` + orderBy);
 }
 
 /**
  * This function deletes a song (row) from the songs table for a given id
- * @param {Array} req 
- * @param {Array} res 
+ * @param {Object} req 
+ * @param {Object} res 
  */
 const deleteSong = (req, res) => {
     const { id } = req.params;
 
     Database.deleteRow(
         TABLE,
-        `ID = "${id}"`
+        `ID = "${id}"`,
+        response => {
+            Utilities.responseHandlingCUD(res, response);
+        }
     );
-
-    res.status(200).send(`SONG WITH ID ${id} SUCCESSFULLY REMOVED`);
-    // res.status(404).send('RESOURCE NOT AVAILABLE!');
 }
 
 /**

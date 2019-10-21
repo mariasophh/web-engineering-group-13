@@ -4,9 +4,10 @@ const Utilities = require('../Utilities');
 const TABLE = 'ARTISTS';
 
 /**
- * This function queries the artists table
- * @param {Array} req 
- * @param {Array} res 
+ * This function queries the artists table;
+ * It performs row selection (with optional WHERE/ ORDER BY clauses) as per received request;
+ * @param {Object} req 
+ * @param {Object} res 
  */
 const getArtists = (req, res) => {
     const { contentType, rankBy, order, offset, limit } = req.query;
@@ -37,33 +38,28 @@ const getArtists = (req, res) => {
     }
     
     Database.fetchTable('*', TABLE + orderBy, response => {
-        res.status(200).send((contentType && contentType === 'csv')
-            ? Utilities.toCSV(response)
-            : response
-        );
+        Utilities.responseHandlingGET(res, response, contentType);
     }, where === '' ? null : where);
 };
 
 /**
  * This function returns descriptive statistics of the songs of an artist
- * @param {Array} req 
- * @param {Array} res 
+ * given a mandatory id and an optional year in the received request;
+ * @param {Object} req 
+ * @param {Object} res 
  */
 const getStatistics = (req, res) => {
     const { id } = req.params;
     const { year, contentType } = req.query;
 
     Database.returnStatistics(id, response => {
-        res.status(200).send((contentType && contentType === 'csv')
-            ? Utilities.toCSV(response)
-            : response
-        );
+        Utilities.responseHandlingGET(res, response, contentType);
     }, year);
 };
 
 /**
  * This function initialises the ARTISTS table and
- * populates it with the initial given values
+ * populates it with the initial given values;
  */
 const initArtists = () => {
     Database.dropTable(TABLE);

@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const Utilities = require('./Utilities');
 const app = express();
 const PORT = 8081;
 
@@ -36,6 +37,7 @@ app.post('/populateDB', (req, res) => {
     res.status(200).send('Populating was successful!');
 });
 
+// display all the defined API routes
 app.get('/', (req, res) => {
     const base = `http://localhost:${PORT}`;
     const stack = [];
@@ -48,6 +50,9 @@ app.get('/', (req, res) => {
 
     res.status(200).send(stack);
 });
+
+// wildcard route to match every route that's not defined 
+app.get('*', Utilities.nonExistingRoute);
 
 app.listen(PORT);
 console.log(`Listening app at http://localhost:${PORT}`)
