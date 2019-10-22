@@ -32,6 +32,7 @@ app.get('/songs/year/:year', Songs.getYearSongs)
 app.get('/songs/artists/:id', Songs.getSongs);
 app.get('/songs/artists/terms/:terms', Songs.getSongsTerm);
 app.get('/artists/statistics/:id', Artists.getStatistics);
+app.get('/releases/artist/:id', Releases.getReleases);
 
 app.post('/populateDB', (req, res) => {
     Artists.initArtists();

@@ -57,14 +57,14 @@ input {
     border-radius: 0;
 }
 
-input[type="text"] {
+input {
     padding: 12px 0;
     width: 100%;
     font-size: 21px;
     border-bottom: 2px solid lightgray;
 }
 
-input[type="text"]:valid {
+input:valid {
     border-bottom: 2px solid black;
 }
 

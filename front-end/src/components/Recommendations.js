@@ -16,7 +16,7 @@ export const Recommendations = (key, array, history) => (
                 ? <a onClick={e => redirect(e, history, item)} key={item.NAME} className="item-complex flex" href="#">{item.NAME}</a>
                 : (
                     <div key={item.NAME} className="item flex">
-                        <span>{item.NAME}</span>
+                        <span>{item.NAME} {item.YEAR !== 0 && `(${item.YEAR})`}</span>
                         <button onClick={e => deleteRow(e, `songs/${item.ID}`)}>DELETE</button>
                     </div>
                 )

@@ -1,7 +1,7 @@
 import React from 'react';
 
 export const Select = props => (
-    <select value={props.value} onChange={e => props.onChange(e, 'value', e.target.value)}>
+    <select value={props.value} onChange={e => props.onChange(e, props.stateName ? props.stateName : 'value', e.target.value)}>
         <option key={props.value} value={props.value}>{props.value}</option>
         {props.items && 
             renderItems(props.items)
@@ -26,6 +26,7 @@ const selectItems = type => (
 
 const SelectSongs = () => (
     [
+        "All years",
         2010,
         2009,
         2008,

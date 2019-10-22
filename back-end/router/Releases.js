@@ -1,5 +1,21 @@
 const json = require('../assets/music.json');
 const Database = require('../Database');
+const Utilities = require('../Utilities');
+const TABLE = 'RELEASES';
+
+/**
+ * This function fetches all the id's of the releases by an artist 
+ * @param {Object} req 
+ * @param {Object} res 
+ */
+const getReleases = (req, res) => {
+    const { id } = req.params;
+    const { contentType } = req.query;
+
+    Database.fetchTable("ID", TABLE, response => {
+        Utilities.responseHandlingGET(res, response, contentType);
+    }, `ARTIST_ID = "${id}"`);
+};
 
  /**
  * This function initialises the RELEASES table and
@@ -44,4 +60,5 @@ const initReleases = () => {
 
 module.exports={
     initReleases,
+    getReleases,
 }

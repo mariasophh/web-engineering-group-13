@@ -10,6 +10,7 @@ export default class Search extends PureComponent {
     state = {
         term: '',
         value: '',
+        genre: null,
         selector: null,
         data: null,
     };
@@ -36,16 +37,47 @@ export default class Search extends PureComponent {
                 break;
             
             case 'value':
-                if (value !== null && value !== '') {
+                if (value !== null && value !== '' && value !== 'All years') {
+                    const { selector } = this.state;
+
+                    fetchKeywordSuggestions(
+                        selector,
+                        this.changeState,
+                        'data',
+                        selector === 'artists'
+                            ? (
+                                value === 'All genres'
+                                    ? ''
+                                    : `?terms=${value}`
+                            ) : (
+                                `/year/${value}`
+                            )
+
+                    );
+                    state = {
+                        ...state,
+                        genre: null,
+                    };
+                } else if (value === 'All years') {
+                    state = {
+                        ...state,
+                        genre: '',
+                    };
+                }
+                break;
+
+            case 'genre':
+                if (value !== '') {
                     fetchKeywordSuggestions(
                         this.state.selector,
                         this.changeState,
                         'data',
-                        value === 'All genres'
+                        value === 'All Genres'
                             ? ''
-                            : `?terms=${value}`
+                            : `/artists/terms/${value}`
                     );
                 }
+                
                 break;
 
             default:
@@ -58,11 +90,11 @@ export default class Search extends PureComponent {
     filterRecommendations = (term, suggestions) => (
         suggestions.filter(suggestion => (
             suggestion.NAME.toLowerCase().search(term.toLowerCase()) !== -1
-        )).splice(0, 10)
+        )).splice(0, 20)
     )
 
     render() {
-        const { selector, data, value, term } = this.state;
+        const { selector, data, value, term, genre } = this.state;
 
         const className = (name, defaultClass = "selector flex") => (
             (selector === name)
@@ -74,7 +106,7 @@ export default class Search extends PureComponent {
             e.preventDefault();
 
             this.props.history.push(path);
-        }
+        };
         
         return (
             <>
@@ -97,6 +129,18 @@ export default class Search extends PureComponent {
                                 }
                             </div>
                         )}
+                        { genre !== null && (
+                            <div className="select-container flex">
+                            {
+                                Select({
+                                    value: 'Song genre',
+                                    type: 'artists',
+                                    stateName: 'genre',
+                                    onChange: this.changeState,
+                                })
+                            }
+                            </div>
+                        ) }
                         { (selector !== null && value !== '') && (
                             <form className="search-container column flex">
                                 <input onChange={e => this.changeState(e, 'term', e.target.value)} value={term} type="text" placeholder={`Search by ${selector} ...`} />

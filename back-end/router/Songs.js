@@ -26,6 +26,10 @@ const updateSong = (req, res) => {
     const { body } = req;
     const { id } = req.params;
     let set = '';
+
+    delete body.NAME;
+    delete body.ID;
+    delete body.TITLE;
     
     Object.keys(body).forEach((param, i) => {
         const comma = Object.keys(body).length === i + 1
@@ -34,7 +38,7 @@ const updateSong = (req, res) => {
 
         set += `${param.toUpperCase()} = ${body[param]}${comma}`;
     });
-    
+
     Database.updateTable(TABLE, set, response => {
         Utilities.responseHandlingCUD(res, response);
     }, `ID = "${id}"`);
@@ -111,7 +115,7 @@ const getYearSongs = (req, res) => {
         }
     }
 
-    Database.fetchTable('ID, TITLE AS NAME', TABLE, response => {
+    Database.fetchTable('ID, TITLE AS NAME, YEAR', TABLE, response => {
         Utilities.responseHandlingGET(res, response, contentType);
     }, `YEAR = ${year}` + orderBy);
 }

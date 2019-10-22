@@ -15,6 +15,11 @@ export const fetchKeywordSuggestions = (query, callback, key, optional = null) =
         if (!data) {
             callback(null, '', null);
         } else {
+            if (data[0] && data[0].hasOwnProperty('TITLE')) {
+                data.forEach(d => {
+                    d.NAME = d.TITLE;
+                });
+            }
             callback(null, key, data);
         }
     })
@@ -42,11 +47,33 @@ export const getImage = (query='Michael Jackson', callback) => {
 }
 
 export const deleteRow = (e, path) => {
+    e.preventDefault();
+
     fetch(BASE + path, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
         },
+    })
+    .then(res => {
+        console.log(res);
+    })
+    .catch(err => {
+        console.log(err);
+    });
+}
+
+export const updateSong = (e, body, isCreate = false) => {
+    e.preventDefault();
+
+    fetch(BASE + `songs/${body.ID}`, {
+        method: isCreate 
+            ? 'POST' 
+            : 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
     })
     .then(res => {
         console.log(res);
