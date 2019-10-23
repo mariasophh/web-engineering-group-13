@@ -9,8 +9,8 @@ const redirect = (e, history, item) => {
 }
 
 /**
- * Render a list of recommendations; The list can either be simple text 
- * or a compount row that can also delete the entry from the server;
+ * Render a list of recommendations; 
+ * The list can either be simple text or a compound row that can also delete the entry from the server;
  * @param {String} key 
  * @param {Array} array 
  * @param {Object} history 

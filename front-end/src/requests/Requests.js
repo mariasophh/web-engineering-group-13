@@ -3,11 +3,11 @@ const BASE = 'http://localhost:8081/';
 const PROXY = 'https://cors-anywhere.herokuapp.com/';
 
 /**
- * 
- * @param {*} query 
- * @param {*} callback 
- * @param {*} key 
- * @param {*} optional 
+ * This function will handle the GET requests to the API
+ * @param {String} query 
+ * @param {Function} callback 
+ * @param {String} key 
+ * @param {String | Optional} optional 
  */
 export const fetchKeywordSuggestions = (query, callback, key, optional = null) => {
     let fetchUrl = BASE + query;
@@ -33,6 +33,11 @@ export const fetchKeywordSuggestions = (query, callback, key, optional = null) =
     .catch(error => console.error(error));
 }
 
+/**
+ * This function will send a request to a 3rd party API to fetch an image for a given artist
+ * @param {String} query 
+ * @param {Function} callback 
+ */
 export const getImage = (query='Michael Jackson', callback) => {
     // format the query 
     let formatted_query = query.toLowerCase().replace(/ /g, "+");
@@ -53,6 +58,11 @@ export const getImage = (query='Michael Jackson', callback) => {
     .catch(error => console.error(error));
 };
 
+/**
+ * This function will handle the DELETE requests to the API
+ * @param {Event} e 
+ * @param {String} path 
+ */
 export const deleteRow = (e, path) => {
     e.preventDefault();
 
@@ -70,10 +80,18 @@ export const deleteRow = (e, path) => {
     });
 };
 
+/**
+ * This function will handle the PUT/POST requests to the API
+ * @param {Event} e 
+ * @param {Object} body 
+ * @param {Boolean} isCreate 
+ */
 export const updateCreateSong = (e, body, isCreate = false) => {
     e.preventDefault();
+    // create unique id 
+    const id = Date.now().toString();
 
-    fetch(BASE + `songs/${body.ID}`, {
+    fetch(BASE + `songs/${id}`, {
         method: isCreate 
             ? 'POST' 
             : 'PUT',

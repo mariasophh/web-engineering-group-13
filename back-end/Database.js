@@ -82,17 +82,11 @@ const createTable = (table, info) => {
  * @param {String} table 
  * @param {String} prep 
  * @param {String} data 
+ * @param {Function} callback
  */
-const insertData = (table, prep, data) => {
-    db.serialize(() => {
-        db.run(
-            `INSERT INTO ${table} 
-                (${prep}) 
-            VALUES 
-                (${data})`
-        );
-    });
-
+const insertData = (table, prep, data, callback) => {
+    const query = `INSERT INTO ${table} (${prep}) VALUES (${data})`;
+    _query(query, callback);
 };
 
 /**

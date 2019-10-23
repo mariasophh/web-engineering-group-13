@@ -28,6 +28,7 @@ app.get('/songs', Songs.getAllSongs);
 app.get('/songs/:id', Songs.getSong);
 app.put('/songs/:id', Songs.updateSong);
 app.delete('/songs/:id', Songs.deleteSong);
+app.post('/songs/:id', Songs.createSong);
 app.get('/songs/year/:year', Songs.getYearSongs)
 app.get('/songs/artists/:id', Songs.getSongs);
 app.get('/songs/artists/terms/:terms', Songs.getSongsTerm);

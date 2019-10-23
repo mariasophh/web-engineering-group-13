@@ -53,7 +53,7 @@ export default class Artist extends PureComponent {
             const object = isCreating
                 ? this.getRelease(title)
                 : this.getTitle(title);
-            // We get the type, to keep data integrity
+            // get the type, to keep data integrity
             const type = typeof object[name] === 'number'
                 ? parseInt(value === '' ? 0 : value)
                 : value;

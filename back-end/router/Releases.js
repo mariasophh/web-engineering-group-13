@@ -53,7 +53,8 @@ const initReleases = () => {
         Database.insertData(
             TABLE,
             'ID, ARTIST_ID, NAME',
-            `${object.id}, "${object.artist_id}", ${object.name}`
+            `${object.id}, "${object.artist_id}", ${object.name}`,
+            response
         );
     });
 };
