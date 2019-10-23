@@ -42,13 +42,17 @@ const nonExistingRoute = (req, res) => {
  * @param {Object} status : status attributes;
  * @param {Object} response : passed value from the callback;
  * @param {String | Optional} contentType 
+ * @param {Array | Optional} refs
  */
-const responseHandlingGET = (status, response, contentType = null, refs = "") => {
+const responseHandlingGET = (status, response, contentType = null, refs=null) => {
+    //  construct the final response from data from the database + links 
     let finalResponse = [];
     Object.keys(response).forEach(key => {
         finalResponse.push({
             data : response[key],
-            links : refs,
+            links : refs
+                    ? refs[key]
+                    : ""
         });
     });
 

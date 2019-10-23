@@ -36,7 +36,30 @@ const getArtists = (req, res) => {
     }
 
     Database.fetchTable('*', TABLE + orderBy, response => {
-        Utilities.responseHandlingGET(res, response, contentType);
+        let links = [];
+        // add links to the response 
+        Object.keys(response).forEach(key => {
+            links.push([
+                {
+                    "rel" : "self",
+                    "href" : `artists/?name=${response[key].NAME}`
+                },
+                {
+                    "rel" : "artistSongs",
+                    "href" : `songs/artists/${response[key].ID}`
+                },
+                {
+                    "rel" : "artistStatistics",
+                    "href" : `artists/statistics/${response[key].ID}`
+                },
+                {
+                    "rel" : "artistReleases",
+                    "href" : `releases/artist/${response[key].ID}`
+                }
+            ])
+        });
+        console.log(links);
+        Utilities.responseHandlingGET(res, response, contentType, links);
     }, where === '' ? null : where);
 };
 
