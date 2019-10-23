@@ -1,5 +1,10 @@
 import React from 'react';
 
+/**
+ * Render any generic select by passing props;
+ * 
+ * @param {Object} props 
+ */
 export const Select = props => (
     <select value={props.value} onChange={e => props.onChange(e, props.stateName ? props.stateName : 'value', e.target.value)}>
         <option key={props.value} value={props.value}>{props.value}</option>
@@ -12,17 +17,25 @@ export const Select = props => (
     </select>
 );
 
+/**
+ * Render the option values inside the select;
+ * @param {Array} items 
+ */
 const renderItems = items => (
     items && items.map(item => (
         <option key={item} value={item}>{item}</option>
     ))
 );
 
+/**
+ * Get predefined arrays of strings to pass inside the @function renderItems
+ * @param {String} type 
+ */
 const selectItems = type => (
     type === 'songs'
         ? SelectSongs()
         : SelectArtists()
-)
+);
 
 const SelectSongs = () => (
     [

@@ -1,6 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 
-import { fetchKeywordSuggestions, getImage, updateSong } from '../requests/Requests';
+import { fetchKeywordSuggestions, getImage, updateCreateSong } from '../requests/Requests';
 import { Table } from './Table';
 import { Select } from './Select';
 
@@ -34,11 +34,12 @@ export default class Artist extends PureComponent {
     changeState = (e, key, value) => {
         if (e !== null) e.preventDefault();
 
+        const { id, title, data, isDuplicating, isCreating } = this.state;
+
         let state = { [key]: value };
 
         if (key === 'value') {
             // Changing the select will update the data rendered on the Table
-            const { id } = this.state;
             const queryString = value === 'Reset Data'
                 ? ''
                 : `?year=${value}`
@@ -48,9 +49,10 @@ export default class Artist extends PureComponent {
         } else if (key === 'update') {
             // get the key that is about to be updated in the object
             const { name } = e.target;
-            const { title, data } = this.state;
             // get the object based on the title selected
-            const object = this.getTitle(title);
+            const object = isCreating
+                ? this.getRelease(title)
+                : this.getTitle(title);
             // We get the type, to keep data integrity
             const type = typeof object[name] === 'number'
                 ? parseInt(value === '' ? 0 : value)
@@ -68,32 +70,37 @@ export default class Artist extends PureComponent {
                 ...state,
                 data: newData,
             }
-        } else if (key === 'create') {
-            // TODO :: use the isDuplicated and pray
-            // get the key that is about to be updated in the object
-            // const { name } = e.target;
-            // const { title, data } = this.state;
-            // // get the object based on the title selected
-            // const object = this.getRelease(title);
-            // // We get the type, to keep data integrity
-            // const type = typeof object[name] === 'number'
-            //     ? parseInt(value === '' ? 0 : value)
-            //     : value;
-            // // update the selected object with the new value from the field
-            // object[name] = type;
-            // // reconstruct the data array to have the updated object
-            // const newData = [object];
-            // data.forEach(item => {
-            //     if (item.TITLE !== title) {
-            //         newData.push(item);
-            //     } 
-            // });
-            // // update the state
-            // state = {
-            //     ...state,
-            //     data: newData,
-            //     isDuplicating: false,
-            // }
+        } else if (key === 'isCreating' && value && isDuplicating) {
+            const newData = [...data];
+            // Duplicate an object that is already in the data object
+            const duplicate = Object.assign({}, newData[0]);
+            // Reset all the values in the object
+            Object.keys(duplicate).forEach(key => {
+                const value = duplicate[key];
+
+                duplicate[key] = typeof value === 'number'
+                    ? 0
+                    : `${key}`;
+            });
+            // Doesn't have to happen twice
+            state = {
+                ...state,
+                isDuplicating: false,
+                data: [duplicate, ...newData],
+            };
+        } else if (key === 'title' && isCreating) {
+            const duplicate = data[0];
+            // Set the RELEASE_ID of what the dropdown has selected
+            duplicate['RELEASE_ID'] = parseInt(value);
+            // Create a new data array to keep immutability in the state
+            const newData = [...data];
+            // Remove the first entry
+            newData.shift();
+            // Set the state 
+            state= {
+                ...state,
+                data: [duplicate, ...newData],
+            }
         }
 
         this.setState(state);
@@ -109,9 +116,37 @@ export default class Artist extends PureComponent {
                 {statistics[key].toFixed(4)}
             </div>
         ))
-    )
+    );
 
-    getYears = data => {
+    /**
+     * Render each song field with their connected dataTypes;
+     */
+    renderSong = title => {
+        const { isCreating } = this.state;
+        const object = isCreating 
+            ? this.getRelease(title)
+            : this.getTitle(title);
+
+        const booleanType = key => isCreating
+            ? (key === 'ID' || key === 'RELEASE_ID' || key === 'NAME')
+            : (key === 'TITLE' || key === 'ID' || key === 'RELEASE_ID' || key === 'NAME');
+
+        return Object.keys(object).map(key => (
+            booleanType(key)
+                ? <Fragment key={key} />
+                : (
+                    <Fragment key={key}>
+                        <span>{key}</span>
+                        <input name={key} onChange={e => this.changeState(e, 'update', e.target.value)} value={object[key]} type={typeof object[key]} placeholder={key} required />
+                    </Fragment>
+                )
+        ));
+    }
+
+    /**
+     * Get an array of all the unique year dates from the songs;
+     */
+    getAllYears = data => {
         const years = [
             'Reset Data'
         ];
@@ -125,35 +160,6 @@ export default class Artist extends PureComponent {
         return years.sort();
     }
 
-    /**
-     * Render each song field with their connected dataTypes;
-     */
-    renderSong = title => {
-        const { isCreating } = this.state;
-        const object = isCreating 
-            ? this.getRelease(parseInt(title))
-            : this.getTitle(title);
-
-        // if (this.state.isCreating) {
-        //     Object.keys(object).forEach(key => {
-        //         object[key] = typeof object[key] === "number"
-        //             ? 0
-        //             : '';
-        //     })
-        // }
-
-        return Object.keys(object).map(key => (
-            (key === 'TITLE' || key === 'ID' || key === 'RELEASE_ID' || key === 'NAME')
-                ? <Fragment key={key}></Fragment>
-                : (
-                    <Fragment key={key}>
-                        <span>{key}</span>
-                        <input name={key} onChange={e => this.changeState(e, isCreating ? 'create' : 'update', e.target.value)} value={object[key]} type={typeof object[key]} placeholder={key} required />
-                    </Fragment>
-                )
-        ));
-    }
-
     getAllTitles = () => (
         this.state.data.map(item => item.TITLE)
     )
@@ -163,7 +169,7 @@ export default class Artist extends PureComponent {
     )
 
     getRelease = release => (
-        this.state.data.filter(item => item['RELEASE_ID'] === release)[0]
+        this.state.data.filter(item => item['RELEASE_ID'] === parseInt(release))[0]
     )
 
     render() {
@@ -194,7 +200,7 @@ export default class Artist extends PureComponent {
                                 }
                             </div>
                             {title !== '' && (
-                                <form onSubmit={e => updateSong(e, this.getTitle(title))} style={{ width: '50%' }} className="flex column">
+                                <form onSubmit={e => updateCreateSong(e, this.getTitle(title))} style={{ width: '50%' }} className="flex column">
                                     {this.renderSong(title)}
                                     <button type="submit">UPDATE</button>
                                 </form>
@@ -216,22 +222,22 @@ export default class Artist extends PureComponent {
                                 }
                             </div>
                             {title !== '' && (
-                                <form onSubmit={e => updateSong(e, this.getTitle(title), true)} style={{ width: '50%' }} className="flex column">
+                                <form onSubmit={e => updateCreateSong(e, this.getRelease(title), true)} style={{ width: '50%' }} className="flex column">
                                     {this.renderSong(title)}
-                                    <button type="submit">UPDATE</button>
+                                    <button type="submit">CREATE</button>
                                 </form>
                             )}        
                         </>
                     )}
                     {data && 
                         <div style={{ width: '50%' }} className="select-container flex">
-                        {
-                            Select({
-                                value: value === '' ? 'Filter By Year' : value,
-                                items: this.getYears(data),
-                                onChange: this.changeState,
-                            })
-                        }
+                            {
+                                Select({
+                                    value: value === '' ? 'Filter By Year' : value,
+                                    items: this.getAllYears(data),
+                                    onChange: this.changeState,
+                                })
+                            }
                         </div>
                     }
                     {data &&

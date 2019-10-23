@@ -46,7 +46,7 @@ const fetchTable = (selects, table, callback, where = null) => {
     const query = where
         ? `SELECT ${selects} FROM ${table} WHERE ${where}`
         : `SELECT ${selects} FROM ${table}`;
-    
+
     _query(query, callback);
 };
 

@@ -2,6 +2,13 @@ const KEY = '13997700-9d6a84e9c34046ed9782c99c9';
 const BASE = 'http://localhost:8081/';
 const PROXY = 'https://cors-anywhere.herokuapp.com/';
 
+/**
+ * 
+ * @param {*} query 
+ * @param {*} callback 
+ * @param {*} key 
+ * @param {*} optional 
+ */
 export const fetchKeywordSuggestions = (query, callback, key, optional = null) => {
     let fetchUrl = BASE + query;
     fetchUrl += (optional && optional !== 'All genres')
@@ -43,8 +50,8 @@ export const getImage = (query='Michael Jackson', callback) => {
             callback(null, 'image', data.hits[0].webformatURL);
         }
     })
-    .catch(error => console.error(error));;
-}
+    .catch(error => console.error(error));
+};
 
 export const deleteRow = (e, path) => {
     e.preventDefault();
@@ -61,9 +68,9 @@ export const deleteRow = (e, path) => {
     .catch(err => {
         console.log(err);
     });
-}
+};
 
-export const updateSong = (e, body, isCreate = false) => {
+export const updateCreateSong = (e, body, isCreate = false) => {
     e.preventDefault();
 
     fetch(BASE + `songs/${body.ID}`, {
@@ -81,4 +88,4 @@ export const updateSong = (e, body, isCreate = false) => {
     .catch(err => {
         console.log(err);
     });
-}
+};

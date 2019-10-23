@@ -1,13 +1,20 @@
 import React from 'react';
 import { deleteRow } from '../requests/Requests'
 
+// Redirect without refreshing;
 const redirect = (e, history, item) => {
     e.preventDefault();
 
     history.push(`/${item.NAME}/${item.ID}`);
 }
 
-
+/**
+ * Render a list of recommendations; The list can either be simple text 
+ * or a compount row that can also delete the entry from the server;
+ * @param {String} key 
+ * @param {Array} array 
+ * @param {Object} history 
+ */
 export const Recommendations = (key, array, history) => (
     !!array.length && (
         <div key={key} className="card-container flex column">

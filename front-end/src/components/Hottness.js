@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 
 import { fetchKeywordSuggestions } from '../requests/Requests';
-
 import { Select } from './Select';
 import { Recommendations } from './Recommendations';
 
@@ -13,7 +12,7 @@ export default class Hottness extends PureComponent {
         selector: null,
         data: null,
     };
-    
+
     changeState = (e, key, value) => {
         if (e !== null) e.preventDefault();
 
@@ -22,10 +21,12 @@ export default class Hottness extends PureComponent {
         switch (key) {
             case 'selector':
                 if (this.state[key] === value) {
+                    // reset the selector if clicked again
                     state = {
                         selector: null,
                     };
                 } else {
+                    // reset the rest of the data if we selected another category
                     state = {
                         selector: value,
                         term: '',
@@ -35,6 +36,7 @@ export default class Hottness extends PureComponent {
                 }
 
                 if (value === 'artists') {
+                    // fetch the 
                     fetchKeywordSuggestions(
                         value,
                         this.changeState,
@@ -43,14 +45,14 @@ export default class Hottness extends PureComponent {
                     );
                 }
                 break;
-            
+
             case 'value':
-                if (value !== null && value !== '') {
+                if (value !== null && value !== '' && value !== 'All years') {
                     fetchKeywordSuggestions(
-                        this.state.selector,
+                        'songs',
                         this.changeState,
                         'data',
-                        `/year/${value}/?rankBy=hotttnesss&order=desc&offset=0&limit=50`
+                        `/year/${value}?rankBy=hotttnesss&order=desc&offset=0&limit=50`
                     );
                 }
                 break;
@@ -62,6 +64,7 @@ export default class Hottness extends PureComponent {
         this.setState(state);
     }
 
+    // Get the recommendations based on a term
     filterRecommendations = (term, suggestions) => (
         suggestions.filter(suggestion => (
             suggestion.NAME.toLowerCase().search(term.toLowerCase()) !== -1
@@ -71,12 +74,13 @@ export default class Hottness extends PureComponent {
     render() {
         const { selector, data, value, term } = this.state;
 
+        // Add / Remove a String from a className
         const className = (name, defaultClass = "selector flex") => (
             (selector === name)
                 ? "selected " + defaultClass
                 : defaultClass
         );
-        
+
         return (
             <>
                 <section className="flex">
@@ -86,7 +90,7 @@ export default class Hottness extends PureComponent {
                             <button onClick={e => this.changeState(e, 'selector', 'artists')} className={className("artists")}>Artists</button>
                             <button onClick={e => this.changeState(e, 'selector', 'songs')} className={className("songs")}>Songs</button>
                         </div>
-                        { (selector !== null && selector !== 'artists') && (
+                        {(selector !== null && selector !== 'artists') && (
                             <div className="select-container flex">
                                 {
                                     Select({
@@ -97,11 +101,11 @@ export default class Hottness extends PureComponent {
                                 }
                             </div>
                         )}
-                        { selector !== null && (
+                        {selector !== null && (
                             <form className="search-container column flex">
                                 {data &&
                                     Recommendations(
-                                        selector, 
+                                        selector,
                                         this.filterRecommendations(term, data),
                                         this.props.history
                                     )

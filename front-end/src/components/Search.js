@@ -23,10 +23,12 @@ export default class Search extends PureComponent {
         switch (key) {
             case 'selector':
                 if (this.state[key] === value) {
+                    // reset the selector if clicked again
                     state = {
                         selector: null,
                     };
                 } else {
+                    // reset the rest of the data if we selected another category
                     state = {
                         selector: value,
                         term: '',
@@ -39,7 +41,7 @@ export default class Search extends PureComponent {
             case 'value':
                 if (value !== null && value !== '' && value !== 'All years') {
                     const { selector } = this.state;
-
+                    // fetch the data based on the Select configuration
                     fetchKeywordSuggestions(
                         selector,
                         this.changeState,
@@ -59,6 +61,7 @@ export default class Search extends PureComponent {
                         genre: null,
                     };
                 } else if (value === 'All years') {
+                    // Reset the genre if it has been selected
                     state = {
                         ...state,
                         genre: '',
@@ -68,6 +71,7 @@ export default class Search extends PureComponent {
 
             case 'genre':
                 if (value !== '') {
+                    // fetch data based on Genre
                     fetchKeywordSuggestions(
                         this.state.selector,
                         this.changeState,
@@ -87,6 +91,9 @@ export default class Search extends PureComponent {
         this.setState(state);
     }
 
+    /**
+     * Filter the array of elements that we are going to recommend based on a term
+     */
     filterRecommendations = (term, suggestions) => (
         suggestions.filter(suggestion => (
             suggestion.NAME.toLowerCase().search(term.toLowerCase()) !== -1
@@ -96,12 +103,14 @@ export default class Search extends PureComponent {
     render() {
         const { selector, data, value, term, genre } = this.state;
 
+        // Add / Remove a String from a className
         const className = (name, defaultClass = "selector flex") => (
             (selector === name)
                 ? "selected " + defaultClass
                 : defaultClass
         );
-
+        
+        // Redirect without refreshing
         const redirect = (e, path) => {
             e.preventDefault();
 
@@ -131,14 +140,14 @@ export default class Search extends PureComponent {
                         )}
                         { genre !== null && (
                             <div className="select-container flex">
-                            {
-                                Select({
-                                    value: 'Song genre',
-                                    type: 'artists',
-                                    stateName: 'genre',
-                                    onChange: this.changeState,
-                                })
-                            }
+                                {
+                                    Select({
+                                        value: genre === '' ? 'Song genre' : genre,
+                                        type: 'artists',
+                                        stateName: 'genre',
+                                        onChange: this.changeState,
+                                    })
+                                }
                             </div>
                         ) }
                         { (selector !== null && value !== '') && (
