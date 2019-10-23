@@ -10,6 +10,7 @@ const PROXY = 'https://cors-anywhere.herokuapp.com/';
  * @param {String | Optional} optional 
  */
 export const fetchKeywordSuggestions = (query, callback, key, optional = null) => {
+
     let fetchUrl = BASE + query;
     fetchUrl += (optional && optional !== 'All genres')
         ? optional
@@ -22,12 +23,18 @@ export const fetchKeywordSuggestions = (query, callback, key, optional = null) =
         if (!data) {
             callback(null, '', null);
         } else {
-            if (data[0] && data[0].hasOwnProperty('TITLE')) {
-                data.forEach(d => {
+            // process only the data from the response (ignore links)
+            let processedData = [];
+            Object.keys(data).forEach(item => {
+                processedData.push(data[item].data);
+            });
+        
+            if (processedData[0] && processedData[0].hasOwnProperty('TITLE')) {
+                processedData.forEach(d => {
                     d.NAME = d.TITLE;
                 });
             }
-            callback(null, key, data);
+            callback(null, key, processedData);
         }
     })
     .catch(error => console.error(error));

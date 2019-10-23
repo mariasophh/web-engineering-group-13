@@ -43,7 +43,15 @@ const nonExistingRoute = (req, res) => {
  * @param {Object} response : passed value from the callback;
  * @param {String | Optional} contentType 
  */
-const responseHandlingGET = (status, response, contentType = null) => {
+const responseHandlingGET = (status, response, contentType = null, refs = "") => {
+    let finalResponse = [];
+    Object.keys(response).forEach(key => {
+        finalResponse.push({
+            data : response[key],
+            links : refs,
+        });
+    });
+
     switch(response) {
         case null:
             status.status(404).send("Resource not available");
@@ -53,8 +61,8 @@ const responseHandlingGET = (status, response, contentType = null) => {
             break;
         default:
             status.status(200).send((contentType && contentType === 'csv')
-                ? toCSV(response)
-                : response
+                ? toCSV(finalResponse)
+                : finalResponse
         );
     }
 };
