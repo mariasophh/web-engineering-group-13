@@ -137,7 +137,7 @@ export default class Artist extends PureComponent {
                 : (
                     <Fragment key={key}>
                         <span>{key}</span>
-                        <input name={key} onChange={e => this.changeState(e, 'update', e.target.value)} value={object[key]} type={typeof object[key]} placeholder={key} required />
+                        <input name={key} onChange={e => this.changeState(e, 'update', e.target.value)} value={(key === "YEAR" && isCreating) ? 2000 : object[key]} type={typeof object[key]} placeholder={key} required />
                     </Fragment>
                 )
         ));
