@@ -101,6 +101,13 @@ export default class Artist extends PureComponent {
                 ...state,
                 data: [duplicate, ...newData],
             }
+        } else if ((key === 'isCreating' && !value) || (key === 'isShowing' && !value)) {
+            // reseting the state after closing
+            state = {
+                ...state,
+                title: '',
+                value: '',
+            }
         }
 
         this.setState(state);
