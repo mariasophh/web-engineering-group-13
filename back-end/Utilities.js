@@ -34,16 +34,21 @@ const toCSV = objArray => {
         // parse information on current links row, note that the links row is an array of objects
         // thus it is treated differently than the data row
         let rowLink = processedLinks[index];
-        Object.keys(rowLink).forEach(item => {
-            let current = rowLink[item];
-
-            csv.push(Object.keys(current).map(fieldName => JSON.stringify(current[fieldName], replacer)).join(','));
-            csv.push(',');
-        });
-    });
+        if(rowLink.length) {
+            Object.keys(rowLink).forEach(item => {
+                let current = rowLink[item];
+                csv.push(Object.keys(current).map(fieldName => JSON.stringify(current[fieldName], replacer)).join(','));
+                csv.push(',');
+            });
+        } else {
+            csv.push(JSON.stringify(rowLink.rel), ",", JSON.stringify(rowLink.href));
+        }
+     });
     // modify headers in manner data/key or links/key
     const newHeaderData = headerData.map(item => {return "data/" + item});
-    const newHeaderLinks = Object.keys((processedLinks[0])[0]).map(item => {return "links/" + item});
+    const newHeaderLinks = (processedLinks[0])[0]
+        ? Object.keys((processedLinks[0])[0]).map(item => {return "links/" + item})
+        : Object.keys(processedLinks[0]).map(item => {return "links/" + item})
     // add headers
     csv.unshift(',');
     csv.unshift(newHeaderLinks.join(','));
