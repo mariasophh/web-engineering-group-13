@@ -45,8 +45,8 @@ const toCSV = objArray => {
     const newHeaderData = headerData.map(item => {return "data/" + item});
     const newHeaderLinks = Object.keys((processedLinks[0])[0]).map(item => {return "links/" + item});
     // add headers
-    csv.unshift(newHeaderLinks.join(','));
     csv.unshift(',');
+    csv.unshift(newHeaderLinks.join(','));
     csv.unshift(newHeaderData.join(','));
     csv = csv.join('\r\n');
     
