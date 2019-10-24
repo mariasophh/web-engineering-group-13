@@ -41,7 +41,8 @@ const toCSV = objArray => {
                 csv.push(',');
             });
         } else {
-            csv.push(JSON.stringify(rowLink.rel), ",", JSON.stringify(rowLink.href));
+            // only one link, parse it once 
+            csv.push(JSON.stringify(rowLink.rel ? rowLink.rel : ""), ",", JSON.stringify(rowLink.href ? rowLink.href : ""));
         }
      });
     // modify headers in manner data/key or links/key
@@ -52,6 +53,7 @@ const toCSV = objArray => {
     // add headers
     csv.unshift(',');
     csv.unshift(newHeaderLinks.join(','));
+    csv.unshift(',');
     csv.unshift(newHeaderData.join(','));
     csv = csv.join('\r\n');
     
@@ -84,7 +86,10 @@ const responseHandlingGET = (status, response, contentType = null, refs=null) =>
             data : response[key],
             links : refs
                     ? refs[key]
-                    : ""
+                    : {
+                        "rel" : "",
+                        "href" : ""
+                      }
         });
     });
 

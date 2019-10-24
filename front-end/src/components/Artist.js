@@ -110,10 +110,10 @@ export default class Artist extends PureComponent {
      * Render the statistics blocks;
      */
     renderStatistics = statistics => (
-        Object.keys(statistics).map(key => (
+        Object.keys(statistics[0]).map(key => (
             <div key={key} className="statistics flex column">
                 <h3>{key}</h3>
-                {statistics[key].toFixed(4)}
+                {(statistics[0])[key].toFixed(4)}
             </div>
         ))
     );

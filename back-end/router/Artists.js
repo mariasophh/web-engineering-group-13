@@ -74,7 +74,7 @@ const getStatistics = (req, res) => {
     const { year, contentType } = req.query;
 
     Database.returnStatistics(id, response => {
-        Utilities.responseHandlingGET(res, response, contentType);
+        Utilities.responseHandlingGET(res, [response], contentType);
     }, year);
 };
 
