@@ -13,7 +13,16 @@ const getSong = (req, res) => {
     const { contentType } = req.query;
     
     Database.fetchTable('*', TABLE, response => {
-        Utilities.responseHandlingGET(res, response, contentType);
+        let links = [];
+        Object.keys(response).forEach(key => {
+            links.push(
+                {
+                    "rel" : "self",
+                    "href" : `songs/${response[key].ID}`
+                }
+            );
+        });
+        Utilities.responseHandlingGET(res, response, contentType, links);
     }, `ID = "${id}"`);
 };
 
@@ -72,7 +81,16 @@ const getSongsTerm = (req, res) => {
     const { contentType } = req.query;
 
     Database.filterByTerms(terms, response => {
-        Utilities.responseHandlingGET(res, response, contentType);
+        let links = [];
+        Object.keys(response).forEach(key => {
+            links.push(
+                {
+                    "rel" : "self",
+                    "href" : `songs/${response[key].ID}`
+                }
+            );
+        });
+        Utilities.responseHandlingGET(res, response, contentType, links);
     })
 }
 
@@ -86,7 +104,16 @@ const getSongs = (req, res) => {
     const { contentType, year } = req.query;
     
     Database.joinTables(id, response => {
-        Utilities.responseHandlingGET(res, response, contentType);
+        let links = [];
+        Object.keys(response).forEach(key => {
+            links.push(
+                {
+                    "rel" : "self",
+                    "href" : `songs/${response[key].ID}`
+                }
+            );
+        });
+        Utilities.responseHandlingGET(res, response, contentType, links);
     }, year);
 };
 
@@ -102,7 +129,16 @@ const getAllSongs = (req, res) => {
         'TITLE AS NAME, HOTTTNESSS, YEAR, ID',
         TABLE,
         response => {
-            Utilities.responseHandlingGET(res, response, contentType);
+            let links = [];
+            Object.keys(response).forEach(key => {
+                links.push(
+                    {
+                        "rel" : "self",
+                        "href" : `songs/${response[key].ID}`
+                    }
+                );
+            });
+            Utilities.responseHandlingGET(res, response, contentType, links);
         }
     );
 };
@@ -134,7 +170,16 @@ const getYearSongs = (req, res) => {
     }
 
     Database.fetchTable('ID, TITLE AS NAME, YEAR', TABLE, response => {
-        Utilities.responseHandlingGET(res, response, contentType);
+        let links = [];
+        Object.keys(response).forEach(key => {
+            links.push(
+                {
+                    "rel" : "self",
+                    "href" : `songs/${response[key].ID}`
+                }
+            );
+        });
+        Utilities.responseHandlingGET(res, response, contentType, links);
     }, `YEAR = ${year}` + orderBy);
 }
 
