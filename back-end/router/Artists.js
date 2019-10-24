@@ -58,7 +58,7 @@ const getArtists = (req, res) => {
                 }
             ])
         });
-        console.log(links);
+        
         Utilities.responseHandlingGET(res, response, contentType, links);
     }, where === '' ? null : where);
 };

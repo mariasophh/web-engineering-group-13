@@ -16,14 +16,41 @@ const read_file = relativePath => {
  * @param {Array} objArray : JSON object array
  */
 const toCSV = objArray => {
-    const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray;
-    let str = `${Object.keys(array[0]).map(value => `"${value}"`).join(",")}` + '\r\n';
+    let processedData = [], processedLinks = [];
+    // separate the data and links in the json to parse them differently
+    Object.keys(objArray).forEach(item => {
+        processedData.push(objArray[item].data);
+        processedLinks.push(objArray[item].links);
+    });
+    // data headers
+    const headerData = Object.keys(processedData[0]);
+    const replacer = (key, value) => value === null ? '' : value;
+    let csv = [];
+    Object.keys(processedData).forEach(index => {
+        // parse information on current data row (object)
+        let rowData = processedData[index];
+        csv.push(headerData.map(fieldName => JSON.stringify(rowData[fieldName], replacer)).join(','));
+        csv.push(',');
+        // parse information on current links row, note that the links row is an array of objects
+        // thus it is treated differently than the data row
+        let rowLink = processedLinks[index];
+        Object.keys(rowLink).forEach(item => {
+            let current = rowLink[item];
 
-    return array.reduce((str, next) => {
-        str += `${Object.values(next).map(value => `"${value}"`).join(",")}` + '\r\n';
-
-        return str;
-    }, str);
+            csv.push(Object.keys(current).map(fieldName => JSON.stringify(current[fieldName], replacer)).join(','));
+            csv.push(',');
+        });
+    });
+    // modify headers in manner data/key or links/key
+    const newHeaderData = headerData.map(item => {return "data/" + item});
+    const newHeaderLinks = Object.keys((processedLinks[0])[0]).map(item => {return "links/" + item});
+    // add headers
+    csv.unshift(newHeaderLinks.join(','));
+    csv.unshift(',');
+    csv.unshift(newHeaderData.join(','));
+    csv = csv.join('\r\n');
+    
+    return csv;
 };
 
 /**
