@@ -80,18 +80,6 @@ const nonExistingRoute = (req, res) => {
  */
 const responseHandlingGET = (status, response, contentType = null, refs=null) => {
     //  construct the final response from data from the database + links 
-    let finalResponse = [];
-    Object.keys(response).forEach(key => {
-        finalResponse.push({
-            data : response[key],
-            links : refs
-                    ? refs[key]
-                    : {
-                        "rel" : "",
-                        "href" : ""
-                      }
-        });
-    });
 
     switch(response) {
         case null:
@@ -101,6 +89,19 @@ const responseHandlingGET = (status, response, contentType = null, refs=null) =>
             status.status(400).send("Bad request");
             break;
         default:
+            let finalResponse = [];
+            Object.keys(response).forEach(key => {
+                finalResponse.push({
+                    data : response[key],
+                    links : refs
+                            ? refs[key]
+                            : {
+                                "rel" : "",
+                                "href" : ""
+                            }
+                });
+            });
+
             status.status(200).send((contentType && contentType === 'csv')
                 ? toCSV(finalResponse)
                 : finalResponse

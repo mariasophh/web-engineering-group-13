@@ -58,7 +58,7 @@ const getArtists = (req, res) => {
                 }
             ])
         });
-        
+
         Utilities.responseHandlingGET(res, response, contentType, links);
     }, where === '' ? null : where);
 };
@@ -74,7 +74,7 @@ const getStatistics = (req, res) => {
     const { year, contentType } = req.query;
 
     Database.returnStatistics(id, response => {
-        Utilities.responseHandlingGET(res, [response], contentType);
+        Utilities.responseHandlingGET(res, response ? [response] : null, contentType);
     }, year);
 };
 

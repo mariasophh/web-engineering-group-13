@@ -170,8 +170,11 @@ const filterByTerms = (terms, callback) => {
  */
 const returnStatistics = (id, callback, year = null) => {
     joinTables(id, response => {
+
         let statistics = {}, popularity = [];
         const length = response.length;
+
+        if(!length) callback(null);
 
         for(let i=0; i < length; i++) {
             const { HOTTTNESSS } = response[i];
