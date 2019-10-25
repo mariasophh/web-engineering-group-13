@@ -114,7 +114,7 @@ const initArtists = () => {
             TABLE,
             'ID, FAMILIARITY, HOTTTNESSS, LATITUDE, LOCATION, LONGTITUDE, NAME, SIMILAR, TERMS, FREQ',
             `"${object.id}", ${object.familiarity}, ${object.hotttnesss}, ${object.latitude}, ${object.location}, ${object.longitude}, "${object.name}", ${object.similar}, "${object.terms}", ${object.terms_freq}`,
-            response
+            response => {}
         );
     });
 };

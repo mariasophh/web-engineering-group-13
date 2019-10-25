@@ -67,8 +67,8 @@ const createSong = (req, res) => {
         'ID, RELEASE_ID, HOTTTNESSS, TITLE, YEAR, ARTIST_MBTAGS, ARTIST_MBTAGS_COUNT, BARS_CONFIDENCE, BARS_START, BEATS_CONFIDENCE, BEATS_START, DURATION, END_OF_FADE_IN, KEY, LOUDNESS, KEY_CONFIDENCE, MODE, MODE_CONFIDENCE, START_OF_FADE_OUT, TATUMS_CONFIDENCE, TATUMS_START, TEMPO, TIME_SIGNATURE, TIME_SIGNATURE_CONFIDENCE',
         `"${id}", ${body.RELEASE_ID}, ${body.HOTTTNESSS}, "${body.TITLE}", ${body.YEAR}, ${body.ARTIST_MBTAGS}, ${body.ARTIST_MBTAGS_COUNT}, ${body.BARS_CONFIDENCE}, ${body.BARS_START}, ${body.BEATS_CONFIDENCE}, ${body.BEATS_START}, ${body.DURATION}, ${body.END_OF_FADE_IN}, ${body.KEY}, ${body.LOUDNESS}, ${body.KEY_CONFIDENCE}, ${body.MODE}, ${body.MODE_CONFIDENCE}, ${body.START_OF_FADE_OUT}, ${body.TATUMS_CONFIDENCE}, ${body.TATUMS_START}, ${body.TEMPO}, ${body.TIME_SIGNATURE}, ${body.TIME_SIGNATURE_CONFIDENCE}`,
         response => {
-            Utilities.responseHandlingGET(res, response);
-    })
+            Utilities.responseHandlingCUD(res, response);
+    });
 };
 
 /**
@@ -238,7 +238,7 @@ const initSongs = () => {
             TABLE,
             'ID, RELEASE_ID, HOTTTNESSS, TITLE, YEAR, ARTIST_MBTAGS, ARTIST_MBTAGS_COUNT, BARS_CONFIDENCE, BARS_START, BEATS_CONFIDENCE, BEATS_START, DURATION, END_OF_FADE_IN, KEY, LOUDNESS, KEY_CONFIDENCE, MODE, MODE_CONFIDENCE, START_OF_FADE_OUT, TATUMS_CONFIDENCE, TATUMS_START, TEMPO, TIME_SIGNATURE, TIME_SIGNATURE_CONFIDENCE',
             `"${object.id}", ${object.release_id}, ${object.hotttnesss}, "${object.title}", ${object.year}, ${object.artist_mbtags}, ${object.artist_mbtags_count}, ${object.bars_confidence}, ${object.bars_start}, ${object.beats_confidence}, ${object.beats_start}, ${object.duration}, ${object.end_of_fade_in}, ${object.key}, ${object.loudness}, ${object.key_confidence}, ${object.mode}, ${object.mode_confidence}, ${object.start_of_fade_out}, ${object.tatums_confidence}, ${object.tatums_start}, ${object.tempo}, ${object.time_signature}, ${object.time_signature_confidence}`,
-            response
+            response => {}
         );
     });
 };

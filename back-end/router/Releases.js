@@ -54,7 +54,7 @@ const initReleases = () => {
             TABLE,
             'ID, ARTIST_ID, NAME',
             `${object.id}, "${object.artist_id}", ${object.name}`,
-            response
+            response => {}
         );
     });
 };
