@@ -4,15 +4,19 @@ const Utilities = require('../Utilities');
 const TABLE = 'ARTISTS';
 
 /**
- * This function queries the artists table
- * @param {Array} req 
- * @param {Array} res 
+ * This function queries the artists table;
+ * It performs row selection (with optional WHERE/ ORDER BY clauses) as per received request;
+ * @param {Object} req 
+ * @param {Object} res 
  */
 const getArtists = (req, res) => {
     const { contentType, rankBy, order, offset, limit } = req.query;
     let where = '';
     let orderBy = '';
 
+    // remove contentType property for database filtering
+    if(contentType) delete req.query.contentType;
+    
     if (!rankBy) {
         // parse possible query parameters for filtering 
         Object.keys(req.query).forEach((key, i) => {
@@ -30,18 +34,53 @@ const getArtists = (req, res) => {
             orderBy += ` OFFSET ${offset}`;
         }
     }
-    
+
     Database.fetchTable('*', TABLE + orderBy, response => {
-        res.status(200).send((contentType && contentType === 'csv')
-            ? Utilities.toCSV(response)
-            : response
-        );
+        let links = [];
+        // add links to the response 
+        Object.keys(response).forEach(key => {
+            links.push([
+                {
+                    "rel" : "self",
+                    "href" : `artists/?name=${response[key].NAME}`
+                },
+                {
+                    "rel" : "artistSongs",
+                    "href" : `songs/artists/${response[key].ID}`
+                },
+                {
+                    "rel" : "artistStatistics",
+                    "href" : `artists/statistics/${response[key].ID}`
+                },
+                {
+                    "rel" : "artistReleases",
+                    "href" : `releases/artist/${response[key].ID}`
+                }
+            ])
+        });
+
+        Utilities.responseHandlingGET(res, response, contentType, links);
     }, where === '' ? null : where);
 };
 
 /**
+ * This function returns descriptive statistics of the songs of an artist
+ * given a mandatory id and an optional year in the received request;
+ * @param {Object} req 
+ * @param {Object} res 
+ */
+const getStatistics = (req, res) => {
+    const { id } = req.params;
+    const { year, contentType } = req.query;
+
+    Database.returnStatistics(id, response => {
+        Utilities.responseHandlingGET(res, response ? [response] : null, contentType);
+    }, year);
+};
+
+/**
  * This function initialises the ARTISTS table and
- * populates it with the initial given values
+ * populates it with the initial given values;
  */
 const initArtists = () => {
     Database.dropTable(TABLE);
@@ -74,7 +113,8 @@ const initArtists = () => {
         Database.insertData(
             TABLE,
             'ID, FAMILIARITY, HOTTTNESSS, LATITUDE, LOCATION, LONGTITUDE, NAME, SIMILAR, TERMS, FREQ',
-            `"${object.id}", ${object.familiarity}, ${object.hotttnesss}, ${object.latitude}, ${object.location}, ${object.longitude}, "${object.name}", ${object.similar}, "${object.terms}", ${object.terms_freq}`
+            `"${object.id}", ${object.familiarity}, ${object.hotttnesss}, ${object.latitude}, ${object.location}, ${object.longitude}, "${object.name}", ${object.similar}, "${object.terms}", ${object.terms_freq}`,
+            response => {}
         );
     });
 };
@@ -82,4 +122,5 @@ const initArtists = () => {
 module.exports = {
     getArtists,
     initArtists,
+    getStatistics,
 };

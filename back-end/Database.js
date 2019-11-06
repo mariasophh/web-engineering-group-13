@@ -1,4 +1,5 @@
 const sqlite3 = require('sqlite3').verbose();
+const stat = require('simple-statistics');
 
 const db = new sqlite3.Database('./sqlite.db', error => {
     const text = error
@@ -8,6 +9,11 @@ const db = new sqlite3.Database('./sqlite.db', error => {
     console.log(text);
 });
 
+/**
+ * This function will perform any query on the database (synchronously);
+ * @param {String} query 
+ * @param {Function} callback 
+ */
 const _query = async (query, callback) => {
     const serialize = new Promise((resolve, reject) => {
         db.serialize(() => {
@@ -24,12 +30,13 @@ const _query = async (query, callback) => {
     await serialize.then(response => {
         callback(response);
     }).catch(error => {
+        callback("error"); // return error for response handling
         console.log('Internal Error -- ', error);
     });
 }
 
 /**
- * Fetch the entire table;
+ * Fetch a table (by SELECT clause and optionally WHERE clause);
  * @param {String} selects 
  * @param {String} table 
  * @param {Function} callback 
@@ -39,16 +46,16 @@ const fetchTable = (selects, table, callback, where = null) => {
     const query = where
         ? `SELECT ${selects} FROM ${table} WHERE ${where}`
         : `SELECT ${selects} FROM ${table}`;
-    
+
     _query(query, callback);
 };
 
 /**
  * Update a table
- * @param {*} table 
- * @param {*} set 
- * @param {*} callback 
- * @param {*} where 
+ * @param {String} table 
+ * @param {String} set 
+ * @param {Function} callback 
+ * @param {String} where 
  */
 const updateTable = (table, set, callback, where = null) => {
     const query = where
@@ -75,17 +82,11 @@ const createTable = (table, info) => {
  * @param {String} table 
  * @param {String} prep 
  * @param {String} data 
+ * @param {Function} callback
  */
-const insertData = (table, prep, data) => {
-    db.serialize(() => {
-        db.run(
-            `INSERT INTO ${table} 
-                (${prep}) 
-            VALUES 
-                (${data})`
-        );
-    });
-
+const insertData = (table, prep, data, callback) => {
+    const query = `INSERT INTO ${table} (${prep}) VALUES (${data})`;
+    _query(query, callback);
 };
 
 /**
@@ -93,14 +94,14 @@ const insertData = (table, prep, data) => {
  * @param {String} table 
  * @param {String} data 
  */
-const deleteRow = (table, data) => {
-    db.serialize(() => {
-        db.run(`DELETE FROM ${table} WHERE ${data}`);
-    });
+const deleteRow = (table, data, callback) => {
+    const query = `DELETE FROM ${table} WHERE ${data}`;
+
+    _query(query, callback);
 }
 
 /**
- * Delete table if present
+ * Delete table if present;
  * @param {String} table 
  */
 const dropTable = table => {
@@ -110,13 +111,15 @@ const dropTable = table => {
 };
 
 /**
- * 
- * @param {*} artistID 
- * @param {*} callback 
+ * This function will fetch all the songs by an artist
+ * @param {String} artistID 
+ * @param {Function} callback 
+ * @param {Integer | Optional} year
  */
-const joinTables = (artistID, callback) => {
+const joinTables = (artistID, callback, year = null) => {
     fetchTable('ID', 'RELEASES', response => {
         let songs = '';
+
         response.forEach((element, i) => {
             const { ID } = element;
             const comma = response.length === i + 1
@@ -125,11 +128,67 @@ const joinTables = (artistID, callback) => {
             songs += ID + comma;
         });
        
+        const where = year 
+        ? `RELEASE_ID IN (${songs}) AND YEAR=${year}`
+        : `RELEASE_ID IN (${songs})`;
+
         fetchTable('*', 'SONGS', mergedSongs => {
             callback(mergedSongs);
-        }, `RELEASE_ID IN (${songs})`);
+        }, where);
     }, `ARTIST_ID = "${artistID}"`);
-}
+};
+
+/**
+ * This function will fetch all the songs by artists 
+ * in a specific genre (filtered by terms)
+ * @param {String} terms 
+ * @param {Function} callback 
+ */
+const filterByTerms = (terms, callback) => {
+    fetchTable('ID', 'ARTISTS', response => {
+        let songs = [];
+        const length = response.length;
+
+        for (let i = 0; i < length; i++) {
+            const { ID } = response[i];
+            
+            joinTables(ID, res => {
+                songs = songs.concat(res);
+                
+                if (i + 1 === length) callback(songs);
+            });
+        }
+    }, `TERMS = "${terms}"`);
+};
+
+/**
+ * This function will return descriptive statistics 
+ * retrived from the database entries
+ * @param {String} id 
+ * @param {Function} callback 
+ * @param {Integer | Optional} year 
+ */
+const returnStatistics = (id, callback, year = null) => {
+    joinTables(id, response => {
+
+        let statistics = {}, popularity = [];
+        const length = response.length;
+
+        if(!length) callback(null);
+
+        for(let i=0; i < length; i++) {
+            const { HOTTTNESSS } = response[i];
+            popularity.push(HOTTTNESSS);
+
+            if(i + 1 === length) {
+                statistics.MEAN = stat.mean(popularity);
+                statistics.MEDIAN = stat.median(popularity);
+                statistics.STD = stat.standardDeviation(popularity);
+                callback(statistics);
+            }
+        }
+    }, year);
+};
 
 module.exports = {
     updateTable,
@@ -139,4 +198,6 @@ module.exports = {
     deleteRow,
     fetchTable,
     joinTables,
+    filterByTerms,
+    returnStatistics,
 };
